@@ -292,7 +292,6 @@
             justify-content: center;
             width: 100%;
             max-width: 600px;
-            /* Если экран маленький, даем возможность скроллить текст, но не скрывать его */
             flex-shrink: 1; 
         }
 
@@ -388,9 +387,9 @@
             object-position: center top; 
         }
 
-        /* --- НОВЫЙ ДИЗАЙН ЭКРАНА ЗАГРУЗКИ --- */
+        /* --- НОВЫЙ ДИЗАЙН ЭКРАНА ЗАГРУЗКИ (Обновлен) --- */
         #loading-screen {
-            background: linear-gradient(180deg, #87CEEB 0%, #4facfe 100%);
+            background: linear-gradient(180deg, #87CEEB 0%, #caf0f8 60%, #4facfe 100%);
             z-index: 2000;
             justify-content: center;
             align-items: center;
@@ -401,13 +400,14 @@
         /* Солнце */
         .sun {
             position: absolute;
-            top: 10vmin;
-            right: 10vmin;
-            width: 15vmin;
-            height: 15vmin;
+            top: 5vh;
+            right: 5vw;
+            width: 12vmin;
+            height: 12vmin;
             background: radial-gradient(circle, #ffd700 40%, rgba(255, 215, 0, 0.5) 70%, rgba(255, 215, 0, 0) 100%);
             border-radius: 50%;
             animation: sunPulse 4s infinite alternate;
+            z-index: 1;
         }
         @keyframes sunPulse {
             from { transform: scale(1); opacity: 0.9; }
@@ -417,156 +417,156 @@
         /* Облака */
         .cloud {
             position: absolute;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50px;
             animation: moveCloud linear infinite;
+            z-index: 1;
         }
-        .cloud::after {
-            content: '';
-            position: absolute;
-            background: inherit;
-            border-radius: 50%;
-            width: 50%;
-            height: 150%;
-            top: -50%;
-            left: 15%;
-        }
-        .cloud::before {
-            content: '';
-            position: absolute;
-            background: inherit;
-            border-radius: 50%;
-            width: 40%;
-            height: 120%;
-            top: -40%;
-            right: 15%;
-        }
-        .c1 { width: 20vmin; height: 6vmin; top: 15vmin; left: -25vmin; animation-duration: 25s; opacity: 0.9; }
-        .c2 { width: 15vmin; height: 5vmin; top: 30vmin; left: -20vmin; animation-duration: 35s; animation-delay: 5s; opacity: 0.7; }
-        .c3 { width: 12vmin; height: 4vmin; top: 8vmin; left: -15vmin; animation-duration: 45s; animation-delay: 10s; opacity: 0.6; }
+        .cloud::after { content: ''; position: absolute; background: inherit; border-radius: 50%; width: 50%; height: 150%; top: -50%; left: 15%; }
+        .cloud::before { content: ''; position: absolute; background: inherit; border-radius: 50%; width: 40%; height: 120%; top: -40%; right: 15%; }
+        .c1 { width: 18vmin; height: 5vmin; top: 10vh; left: -20vw; animation-duration: 45s; opacity: 0.95; }
+        .c2 { width: 14vmin; height: 4vmin; top: 20vh; left: -10vw; animation-duration: 60s; animation-delay: 5s; opacity: 0.8; }
+        .c3 { width: 10vmin; height: 3vmin; top: 5vh; left: -30vw; animation-duration: 80s; animation-delay: 15s; opacity: 0.7; }
 
         @keyframes moveCloud {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(120vw); }
+            0% { transform: translateX(-30vw); }
+            100% { transform: translateX(130vw); }
         }
 
         /* Острова с пальмами */
         .island {
             position: absolute;
             background: #d4a76a;
-            border-radius: 50% 50% 0 0;
-            bottom: -5px; /* Скрываем низ */
-            z-index: 2;
+            border-radius: 60% 60% 0 0;
+            bottom: 25vh; /* Поднимаем острова выше уровня воды */
+            z-index: 2; /* За кораблем и волнами */
             box-shadow: inset -5px 0 10px rgba(0,0,0,0.2);
         }
         .island-1 {
-            width: 30vmin;
-            height: 10vmin;
-            left: 5vmin;
+            width: 25vmin;
+            height: 12vmin;
+            left: 5vw;
         }
         .island-2 {
-            width: 40vmin;
-            height: 12vmin;
-            right: 5vmin;
+            width: 35vmin;
+            height: 15vmin;
+            right: 5vw;
+            bottom: 27vh;
             background: #c59b60;
         }
 
-        /* Пальма (CSS) */
+        /* Пальма */
         .palm {
             position: absolute;
-            bottom: 80%;
+            bottom: 85%;
             left: 50%;
-            width: 2vmin;
-            height: 12vmin;
+            width: 1.5vmin;
+            height: 10vmin;
             background: #8b4513;
             border-radius: 50% 50% 0 0;
             transform-origin: bottom center;
-            transform: rotate(-5deg);
+            transform: rotate(-10deg);
         }
         .palm-leaves {
             position: absolute;
-            top: -8vmin;
-            left: -9vmin;
-            width: 20vmin;
-            height: 10vmin;
+            top: -6vmin;
+            left: -8vmin;
+            width: 16vmin;
+            height: 8vmin;
         }
         .leaf {
             position: absolute;
-            width: 10vmin;
-            height: 3vmin;
+            width: 8vmin;
+            height: 2.5vmin;
             background: #2ecc71;
             border-radius: 50% 0 50% 0;
             top: 50%;
             left: 50%;
             transform-origin: 0 50%;
         }
-        .l1 { transform: rotate(-30deg); }
-        .l2 { transform: rotate(10deg); }
-        .l3 { transform: rotate(150deg); background: #27ae60; }
-        .l4 { transform: rotate(200deg); background: #27ae60; }
+        .l1 { transform: rotate(-40deg); }
+        .l2 { transform: rotate(0deg); }
+        .l3 { transform: rotate(140deg); background: #27ae60; }
+        .l4 { transform: rotate(190deg); background: #27ae60; }
 
         /* Кораблик */
         .ship-container {
             position: absolute;
-            bottom: 12vh;
+            bottom: 18vh; /* Позиция между волнами */
             left: 50%;
+            width: 16vmin;
+            height: 16vmin;
             transform: translateX(-50%);
-            z-index: 4;
-            animation: shipBob 3s ease-in-out infinite;
+            z-index: 4; /* Между волнами */
+            animation: shipBob 4s ease-in-out infinite;
         }
-        .ship-body {
-            width: 12vmin;
-            height: 5vmin;
-            background: #5d4037;
-            border-radius: 0 0 5vmin 5vmin;
-            position: relative;
-        }
-        .ship-mast {
-            position: absolute;
-            bottom: 5vmin;
-            left: 50%;
-            width: 1vmin;
-            height: 8vmin;
-            background: #3e2723;
-            transform: translateX(-50%);
-        }
-        .ship-sail {
-            position: absolute;
-            bottom: 2vmin;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-left: 4vmin solid transparent;
-            border-right: 0 solid transparent;
-            border-bottom: 6vmin solid #f0f0f0;
-            transform: translateX(0.5vmin); /* Сдвиг от мачты */
-        }
-        .ship-flag {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-left: 2vmin solid #d32f2f;
-            border-top: 1vmin solid transparent;
-            border-bottom: 1vmin solid transparent;
-            transform: translateX(0.5vmin);
-        }
-
-        @keyframes shipBob {
-            0%, 100% { transform: translateX(-50%) translateY(0) rotate(2deg); }
-            50% { transform: translateX(-50%) translateY(1vmin) rotate(-2deg); }
-        }
-
-        /* Волны */
-        .wave-container {
+        .ship-hull {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 25vh;
+            height: 35%;
+            background: #5d4037;
+            border-radius: 5% 5% 45% 45%; 
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.3);
+        }
+        .ship-stripe {
+            position: absolute;
+            top: 15%;
+            left: 0;
+            width: 100%;
+            height: 15%;
+            background: #8d6e63;
+        }
+        .ship-mast-main {
+            position: absolute;
+            bottom: 30%;
+            left: 48%;
+            width: 4%;
+            height: 60%;
+            background: #3e2723;
+        }
+        .ship-sail-main {
+            position: absolute;
+            bottom: 45%;
+            left: 52%;
+            width: 40%;
+            height: 40%;
+            background: #fdfefe;
+            border-radius: 0 50% 50% 5%;
+            box-shadow: inset -2px 0 5px rgba(0,0,0,0.1);
+            transform: skewX(-5deg);
+        }
+        .ship-flag {
+            position: absolute;
+            top: 10%;
+            left: 52%;
+            width: 20%;
+            height: 10%;
+            background: #d32f2f;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+            animation: flagWave 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes shipBob {
+            0% { transform: translateX(-50%) translateY(0) rotate(1deg); }
+            50% { transform: translateX(-50%) translateY(2vmin) rotate(-1deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(1deg); }
+        }
+        @keyframes flagWave {
+            from { transform: scaleX(1); }
+            to { transform: scaleX(0.9); }
+        }
+
+        /* Океан - Слои натуральной воды */
+        .ocean {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35vh; /* Занимает нижние 35% экрана */
             overflow: hidden;
-            z-index: 5;
+            z-index: 3;
             pointer-events: none;
         }
 
@@ -578,38 +578,41 @@
             height: 100%;
             background-repeat: repeat-x;
             background-size: 50% 100%;
-            opacity: 0.9;
+            transform: translate3d(0, 0, 0);
         }
 
-        /* SVG Волна (белая) */
-        .wave-bg {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%23ffffff'/%3E%3C/svg%3E");
-        }
-
-        .wave-1 {
-            z-index: 7;
-            height: 8vh;
-            opacity: 0.9;
-            animation: moveWave 8s linear infinite;
-            filter: brightness(0.95); /* Чуть темнее белого */
-        }
-        .wave-2 {
-            z-index: 6;
-            height: 12vh;
-            bottom: 0;
-            opacity: 0.6;
-            animation: moveWave 12s linear infinite reverse;
-            filter: brightness(0.9);
-        }
-        .wave-3 {
+        /* SVG волны разных цветов для глубины */
+        .w1 {
+            /* Темно-синяя (дальняя) */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%231e3c72'/%3E%3C/svg%3E");
             z-index: 3;
-            height: 16vh;
+            animation: waveMove 20s linear infinite;
+            height: 30vh;
             bottom: 0;
-            opacity: 0.4;
-            animation: moveWave 18s linear infinite;
+            opacity: 1;
+        }
+        
+        .w2 {
+             /* Средняя (Синяя) */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%232a5298'/%3E%3C/svg%3E");
+            z-index: 5; /* Перед кораблем */
+            animation: waveMove 15s linear infinite reverse;
+            height: 20vh;
+            bottom: 0;
+            opacity: 0.9;
         }
 
-        @keyframes moveWave {
+        .w3 {
+            /* Светлая (ближняя) */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%234facfe'/%3E%3C/svg%3E");
+            z-index: 6;
+            animation: waveMove 8s linear infinite;
+            height: 10vh;
+            bottom: -1vh;
+            opacity: 0.95;
+        }
+
+        @keyframes waveMove {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
@@ -618,39 +621,61 @@
         .loading-content {
             position: relative;
             z-index: 20;
-            background: rgba(255, 255, 255, 0.95);
+            background: #fff8e1; /* Цвет пергамента */
             padding: 4vmin;
-            border-radius: 20px;
-            border: 4px solid #8b4513;
+            border-radius: 15px;
+            border: 3px solid #8b4513;
             max-width: 800px;
             width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
             text-align: left;
-            margin-top: -10vmin; /* Чуть поднять над водой */
+            margin-top: -20vmin; /* Поднимаем повыше */
         }
 
-        #loading-text {
-            font-family: 'Comfortaa', monospace; 
-            color: #5d4037; 
-            font-size: 2.5vmin;
+        /* --- ЭФФЕКТ ПЕСЧАНОГО ТЕКСТА --- */
+        #loading-text, .dialogue-text-sand {
+            font-family: 'Comfortaa', cursive; 
+            font-size: 2.8vmin;
             font-weight: bold;
             line-height: 1.5;
-            white-space: pre-wrap; 
-            border-right: 3px solid #e67e22;
-            animation: blink-caret 0.75s step-end infinite;
-            margin-bottom: 2vmin;
-            min-height: 12vmin; 
+            min-height: 12vmin;
+            color: #5d4037;
         }
 
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #e67e22; }
+        .sand-word {
+            display: inline-block;
+            margin-right: 0.3em;
+            opacity: 0;
+            animation: sandForm 1.5s ease-out forwards;
+        }
+
+        @keyframes sandForm {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(1.5);
+                filter: blur(8px);
+                color: #e6c288;
+                text-shadow: 0 0 20px #e6c288;
+            }
+            60% {
+                opacity: 1;
+                filter: blur(2px);
+                color: #bcaaa4;
+                text-shadow: 0 0 5px #e6c288;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+                color: #5d4037;
+                text-shadow: none;
+            }
         }
 
         #loading-continue-btn {
             opacity: 0;
             transition: opacity 1s;
-            margin: 0 auto;
+            margin: 2vmin auto 0;
             display: block;
             background: linear-gradient(180deg, #27ae60 0%, #2ecc71 100%);
             box-shadow: 0 0.6vmin 0 #1e8449;
@@ -680,29 +705,31 @@
         <div class="cloud c2"></div>
         <div class="cloud c3"></div>
 
-        <!-- Острова -->
+        <!-- Острова (на горизонте) -->
         <div class="island island-1">
             <div class="palm"><div class="palm-leaves"><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div></div></div>
         </div>
         <div class="island island-2"></div>
 
-        <!-- Кораблик -->
+        <!-- Кораблик (между волнами) -->
         <div class="ship-container">
-            <div class="ship-mast">
+            <div class="ship-mast-main">
                 <div class="ship-flag"></div>
-                <div class="ship-sail"></div>
             </div>
-            <div class="ship-body"></div>
+            <div class="ship-sail-main"></div>
+            <div class="ship-hull">
+                <div class="ship-stripe"></div>
+            </div>
         </div>
         
-        <!-- Волны -->
-        <div class="wave-container">
-            <div class="wave wave-bg wave-3"></div>
-            <div class="wave wave-bg wave-2"></div>
-            <div class="wave wave-bg wave-1"></div>
+        <!-- Океан (слои натуральной воды) -->
+        <div class="ocean">
+            <div class="wave w1"></div> <!-- Дальняя (Темная) -->
+            <div class="wave w2"></div> <!-- Средняя -->
+            <div class="wave w3"></div> <!-- Ближняя (Светлая) -->
         </div>
 
-        <!-- Контент -->
+        <!-- Контент (текст появляется "из песка") -->
         <div class="loading-content">
             <div style="font-family: 'Kelly Slab'; font-size: 4vmin; color: #d35400; margin-bottom: 1vmin; text-align: center;">📜 Информация о проекте</div>
             <div id="loading-text"></div>
@@ -751,7 +778,7 @@
             <div class="cutscene-text-block">
                 <h1>Легенда о Фрегате</h1>
                 <div class="dialogue-box" style="margin-bottom: 3vmin;">
-                    <p>Старец отшельник рассказал нашему юному Чибику, что пройдя пещеру и испытания в ней, он найдёт скрытый грот, где будет Настоящий пиратский фрегат!</p>
+                    <p id="cs1-text">Старец отшельник рассказал нашему юному Чибику, что пройдя пещеру и испытания в ней, он найдёт скрытый грот, где будет Настоящий пиратский фрегат!</p>
                 </div>
                 <button class="btn" onclick="showCutscene2()">Далее ➡</button>
             </div>
@@ -767,8 +794,8 @@
             </div>
             <div class="cutscene-text-block">
                 <div class="dialogue-box" style="margin-bottom: 3vmin;">
-                    <p>Да, испытание в пещере предстоит не простое, нужно проплыть как-то через огромную реку лавы, вдоль огромных скалистых берегов... ну попробуем это сделать по камням.. так, мы видим что есть камни плывущие наиболее устойчиво, попробуем пропрыгать по ним.</p>
-                    <p style="text-align: center; font-weight: bold; font-size: 1.2em; color: #d35400; margin-top: 10px;">ВПЕРЁД!</p>
+                    <p id="cs2-text">Да, испытание в пещере предстоит не простое, нужно проплыть как-то через огромную реку лавы, вдоль огромных скалистых берегов... ну попробуем это сделать по камням.. так, мы видим что есть камни плывущие наиболее устойчиво, попробуем пропрыгать по ним.</p>
+                    <p style="text-align: center; font-weight: bold; font-size: 1.2em; color: #d35400; margin-top: 10px; opacity: 0; animation: fadeInBtn 1s ease-out 5s forwards;">ВПЕРЁД!</p>
                 </div>
                 <button class="btn" style="background: linear-gradient(180deg, #27ae60 0%, #2ecc71 100%); box-shadow: 0 0.6vmin 0 #1e8449;" onclick="startLevelIntro()">НАЧАТЬ</button>
             </div>
@@ -911,36 +938,42 @@
 
     // --- ЛОГИКА ЭКРАНА ЗАГРУЗКИ ---
     const loadingTextFull = "Добро Пожаловать! Это прототип (MVP) одного из уровней находящейся в разработке Обучающей Игры для Детей, в данном уровне Ребёнок играючи изучает и запоминает Алфавит. Так же в игре будут игры для изучения Базовому Русскому Языку (грамматика и пунктуация) и базовая математика.";
-    let loadingIdx = 0;
-    let loadingTimer = null;
+    
+    // Новая логика появления текста "из песка" по словам
+    function playSandAnimation(elementId, text = null) {
+        const container = document.getElementById(elementId);
+        const content = text || container.textContent;
+        container.innerHTML = ""; 
+        
+        const words = content.split(' ');
+        
+        words.forEach((word, index) => {
+            const span = document.createElement('span');
+            span.textContent = word + ' ';
+            span.className = 'sand-word';
+            span.style.animationDelay = `${index * 0.15}s`; 
+            container.appendChild(span);
+        });
+    }
 
-    function startTypewriter() {
-        const el = document.getElementById('loading-text');
-        if (loadingIdx < loadingTextFull.length) {
-            el.textContent += loadingTextFull.charAt(loadingIdx);
-            loadingIdx++;
-            // Случайная задержка для реализма
-            loadingTimer = setTimeout(startTypewriter, 30 + Math.random() * 50); 
-        } else {
-            // Текст закончился
-            finishLoading();
-        }
+    function startSandEffect() {
+        playSandAnimation('loading-text', loadingTextFull);
+        setTimeout(() => {
+            document.getElementById('loading-continue-btn').style.opacity = '1';
+        }, loadingTextFull.split(' ').length * 150 + 500);
     }
 
     function skipTypewriter() {
-        if (loadingIdx < loadingTextFull.length) {
-            clearTimeout(loadingTimer);
-            document.getElementById('loading-text').textContent = loadingTextFull;
-            loadingIdx = loadingTextFull.length;
-            finishLoading();
-        }
-    }
-
-    function finishLoading() {
-        const btn = document.getElementById('loading-continue-btn');
-        btn.style.opacity = '1';
-        btn.style.pointerEvents = 'auto';
-        document.getElementById('loading-text').style.borderRight = 'none'; // Убрать курсор
+        const spans = document.querySelectorAll('#loading-text .sand-word');
+        spans.forEach(span => {
+            span.style.animation = 'none';
+            span.style.opacity = '1';
+            span.style.filter = 'blur(0)';
+            span.style.transform = 'none';
+            span.style.color = '#5d4037';
+            span.style.textShadow = 'none';
+        });
+        document.getElementById('loading-continue-btn').style.opacity = '1';
     }
 
     function enterMenu() {
@@ -950,8 +983,7 @@
     }
 
     window.onload = function() {
-        // Старт печати при загрузке
-        startTypewriter();
+        startSandEffect();
     };
     // ----------------------------
 
@@ -1020,12 +1052,16 @@
         document.getElementById('cutscene1').classList.remove('hidden');
         updateLivesUI();
         initAlphabetUI();
+        
+        playSandAnimation('cs1-text');
     }
 
     function showCutscene2() {
         document.getElementById('cutscene1').classList.add('hidden');
         document.getElementById('cutscene2').classList.remove('hidden');
         gameState = 'cutscene2';
+        
+        playSandAnimation('cs2-text');
     }
 
     function startLevelIntro() {
