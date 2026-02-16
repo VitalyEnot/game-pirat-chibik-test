@@ -146,7 +146,6 @@
             pointer-events: all;
             overflow-y: auto;
             overflow-x: hidden;
-            /* Важно для мобильных: учет челки и кнопок */
             padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
         }
 
@@ -259,7 +258,7 @@
         /* --- Адаптивная вёрстка Катсцен --- */
         .cutscene-layout {
             display: flex;
-            flex-direction: column; /* Мобильный first: вертикально */
+            flex-direction: column; 
             align-items: center;
             justify-content: center;
             width: 100%;
@@ -296,7 +295,7 @@
 
         @media (orientation: landscape) {
             .cutscene-layout {
-                flex-direction: row-reverse; /* Картинка справа */
+                flex-direction: row-reverse; 
                 justify-content: center;
                 align-items: center;
                 gap: 5vw;
@@ -378,75 +377,74 @@
             background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 50%, #E1F5FE 100%);
             z-index: 3000;
             padding: 0;
-            /* Flex layout для вертикального распределения */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
         }
 
-        /* ВЕРХНЯЯ ЧАСТЬ: Контент (Гибкая высота) */
+        /* ВЕРХНЯЯ ЧАСТЬ: Контент */
         .loading-top-ui {
-            position: absolute;
-            top: 0;
-            left: 0;
+            flex: 1; 
             width: 100%;
-            height: 45%; /* Уменьшили верхнюю часть, чтобы дать место воде */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: center; 
             align-items: center;
             z-index: 100;
             padding: 20px;
         }
 
+        /* НИЖНЯЯ ЧАСТЬ: Сцена */
         .loading-scene {
-            position: absolute;
-            bottom: 0;
-            left: 0;
             width: 100%;
-            height: 55%; /* Увеличили высоту моря (было 45%) */
+            height: 55vmin; 
+            min-height: 250px; 
+            max-height: 60%; 
+            position: relative;
             z-index: 10;
-            overflow: hidden;
+            flex-shrink: 0; 
         }
 
-        /* Солнце */
+        /* --- ЭЛЕМЕНТЫ СЦЕНЫ --- */
+        
+        /* Солнце - На переднем плане */
         .sun {
             position: absolute;
-            top: -10vmin; /* Вылезает из нижней секции вверх */
+            top: 2vmin; /* Спустили ниже, чтобы было видно */
             right: 5vw;
             width: 12vmin;
             height: 12vmin;
             background: #FDB813;
             border-radius: 50%;
             box-shadow: 0 0 30px #FDB813, 0 0 60px #FF9800;
-            z-index: 1;
+            z-index: 20; /* Передний план */
             animation: sunPulse 3s infinite alternate;
         }
         @keyframes sunPulse { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* Облака */
+        /* Облака - На переднем плане */
         .cloud {
             position: absolute;
             background: #fff;
             border-radius: 50px;
             opacity: 0.9;
-            z-index: 2;
+            z-index: 20; /* Передний план */
             animation: cloudFloat linear infinite;
         }
         .cloud::after, .cloud::before { content:''; position:absolute; background:inherit; border-radius:50%; }
         .cloud::after { width: 50%; height: 150%; top: -60%; left: 30%; }
         .cloud::before { width: 40%; height: 120%; top: -40%; left: 10%; }
         
-        /* Облака привязаны к верху сцены */
-        .c1 { width: 20vmin; height: 6vmin; top: -5%; left: -20%; animation-duration: 25s; }
-        .c2 { width: 15vmin; height: 5vmin; top: 10%; left: -10%; animation-duration: 35s; animation-delay: 2s; opacity: 0.7; }
+        .c1 { width: 20vmin; height: 6vmin; top: 8%; left: -20%; animation-duration: 25s; }
+        .c2 { width: 15vmin; height: 5vmin; top: 22%; left: -10%; animation-duration: 35s; animation-delay: 2s; opacity: 0.7; }
 
         @keyframes cloudFloat { from { transform: translateX(0); } to { transform: translateX(120vw); } }
 
-        /* Острова - Позиционирование в % от высоты СЦЕНЫ */
+        /* Острова */
         .island-layer {
             position: absolute;
-            bottom: 12%; /* Опустили слой островов ниже (было 25%) */
+            bottom: 12%; 
             width: 100%;
             height: 100%; 
             z-index: 4; 
@@ -459,17 +457,16 @@
             border-radius: 50% 50% 0 0;
             box-shadow: inset -5px 0 15px rgba(0,0,0,0.1);
         }
-        /* ЛЕВЫЙ ОСТРОВ */
+        /* ЛЕВЫЙ ОСТРОВ - Приподнят */
         .island-left { 
             width: 35vmin; height: 15vmin; left: 5%; 
             transform: rotate(-15deg); transform-origin: bottom left; 
-            bottom: -25%; /* Еще глубже (было -20%) */
+            bottom: -12%; /* Выше (было -25%) */
         }
-        /* ПРАВЫЙ ОСТРОВ */
         .island-right { 
             width: 25vmin; height: 10vmin; right: 8%; 
             background: #C59B60; transform: rotate(15deg); transform-origin: bottom right; 
-            bottom: -15%; /* Еще глубже (было -10%) */
+            bottom: -15%; 
         }
         
         /* Пальмы */
@@ -501,23 +498,22 @@
         /* Z-INDEX ПОРЯДОК:
            3. Темная волна (w1)
            4. Острова
-           5. Средняя волна (w2)
-           6. Корабль
+           5. Корабль
+           6. Средняя волна (w2)
            7. Ближняя волна (w3)
+           20. Солнце и Облака
         */
         
-        /* Позиционирование волн относительно НИЗА сцены */
-        /* Подняли волны выше (значения less negative), чтобы воды было больше */
         .w1 {
-            bottom: -238vw; /* Было -242vw */
+            bottom: -238vw; 
             background-color: #1976D2; opacity: 0.9; z-index: 3; animation-duration: 25s; 
         }
         .w2 {
-            bottom: -240vw; /* Было -244vw */
+            bottom: -240vw;
             background-color: #2196F3; opacity: 0.8; z-index: 5; animation-duration: 20s; border-radius: 48.5%; 
         }
         .w3 {
-            bottom: -242vw; /* Было -246vw */
+            bottom: -242vw;
             background-color: #64B5F6; opacity: 0.8; z-index: 7; animation-duration: 15s; border-radius: 49%; 
         }
 
@@ -529,11 +525,11 @@
         /* ФРЕГАТ */
         .frigate {
             position: absolute;
-            bottom: 10%; /* Опустили корабль ниже (было 30%) */
+            bottom: 10%; 
             left: 50%;
             width: 25vmin;
             height: 25vmin;
-            z-index: 6; /* ПЕРЕД средней волной (w2=5) */
+            z-index: 6; 
             transform: translateX(-50%);
             animation: shipSway 6s ease-in-out infinite; 
         }
@@ -565,7 +561,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             text-align: left;
             position: relative;
-            /* Размытие фона под свитком для читаемости */
             backdrop-filter: blur(5px);
         }
         .loading-content::before, .loading-content::after { content: ''; position: absolute; top: 1vmin; width: 1.5vmin; height: 1.5vmin; background: #3E2723; border-radius: 50%; }
@@ -594,7 +589,7 @@
         </div>
     </div>
 
-    <!-- НОВЫЙ ЭКРАН ЗАГРУЗКИ -->
+    <!-- ЭКРАН ЗАГРУЗКИ -->
     <div id="loading-screen" class="overlay-screen" onclick="skipTypewriter()">
         <div class="loading-top-ui">
             <div class="loading-content">
@@ -605,14 +600,15 @@
         </div>
 
         <div class="loading-scene">
+            <!-- Самый передний план: Солнце и Облака -->
             <div class="sun"></div>
             <div class="cloud c1"></div>
             <div class="cloud c2"></div>
 
-            <!-- Самый дальний слой: Темная волна -->
+            <!-- Дальний слой: Темная волна -->
             <div class="css-wave w1"></div> 
 
-            <!-- Слой островов (стоит ЗА кораблем, но ПЕРЕД темной волной) -->
+            <!-- Слой островов -->
             <div class="island-layer">
                 <div class="island island-left">
                     <div class="palm-tree" style="left:20%; height:7vmin; transform: rotate(-15deg);"><div class="palm-leaves"><div class="p-leaf pl1"></div><div class="p-leaf pl2"></div><div class="p-leaf pl3"></div><div class="p-leaf pl4"></div></div></div>
@@ -624,7 +620,7 @@
                 </div>
             </div>
             
-            <!-- Корабль (ПЕРЕД островами) -->
+            <!-- Корабль -->
             <div class="frigate">
                 <div class="mast m1"> 
                     <div class="sail s1"></div>
