@@ -21,7 +21,7 @@
             user-select: none;
             touch-action: none;
             -webkit-tap-highlight-color: transparent;
-            position: fixed; /* Фиксируем body, чтобы избежать скролла страницы */
+            position: fixed; 
             width: 100%;
             height: 100%;
         }
@@ -44,7 +44,7 @@
             display: block;
         }
 
-        /* UI слой поверх канваса */
+        /* UI слой */
         .ui-overlay {
             position: absolute;
             top: 0;
@@ -129,9 +129,9 @@
             transform: scale(1.05);
         }
 
-        /* Полноэкранные слои (Меню, Катсцены) */
+        /* Полноэкранные слои */
         .overlay-screen {
-            position: fixed; /* Используем fixed для надежного покрытия viewport */
+            position: fixed; 
             top: 0;
             left: 0;
             width: 100%;
@@ -144,12 +144,12 @@
             text-align: center;
             z-index: 100;
             pointer-events: all;
-            overflow-y: auto; /* Разрешаем скролл, если контент не влезает */
+            overflow-y: auto;
             overflow-x: hidden;
-            /* Учет "челок" и системных баров */
             padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
         }
 
+        /* Меню стили */
         .menu-title {
             font-family: 'Kelly Slab', serif;
             font-size: 8vmin;
@@ -198,7 +198,7 @@
             background: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
             border: 2px solid #fff;
             padding: 2vmin 5vmin;
-            font-size: 3.5vmin; /* Чуть крупнее для пальцев */
+            font-size: 3.5vmin;
             color: white;
             border-radius: 50px;
             cursor: pointer;
@@ -206,11 +206,11 @@
             transition: transform 0.2s, box-shadow 0.2s;
             font-family: 'Comfortaa', cursive;
             box-shadow: 0 0.6vmin 0 #a04000, 0 1vmin 10px rgba(0,0,0,0.5);
-            width: 90%; /* Шире на мобильных */
+            width: 90%;
             max-width: 450px;
             text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
             z-index: 2;
-            white-space: nowrap; /* Чтобы текст не ехал */
+            white-space: nowrap;
         }
 
         .btn:hover {
@@ -234,7 +234,7 @@
             padding: 4vmin;
             border: 0.8vmin solid #8b4513;
             border-radius: 20px;
-            width: 95%; /* Шире на мобильных */
+            width: 95%;
             max-width: 700px;
             font-size: 3.5vmin;
             pointer-events: all;
@@ -258,19 +258,18 @@
         /* --- Адаптивная вёрстка Катсцен --- */
         .cutscene-layout {
             display: flex;
-            flex-direction: column; /* Мобильный first: вертикально */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100%; /* Стараемся занять всю высоту */
+            height: 100%;
             gap: 2vh;
         }
 
-        /* Контейнер для картинки */
         .cutscene-img-block {
-            width: 50vmin; /* Квадрат, зависящий от мин. стороны экрана */
+            width: 50vmin;
             height: 50vmin;
-            flex-shrink: 0; /* Не сжимать картинку */
+            flex-shrink: 0;
             border: 0.8vmin solid #8b4513;
             border-radius: 20px;
             overflow: hidden;
@@ -284,7 +283,6 @@
             object-fit: cover;
         }
 
-        /* Текстовый блок */
         .cutscene-text-block {
             display: flex;
             flex-direction: column;
@@ -295,83 +293,68 @@
             flex-shrink: 1; 
         }
 
-        /* Специфично для горизонтальной ориентации (ландшафт) */
         @media (orientation: landscape) {
             .cutscene-layout {
-                flex-direction: row-reverse; /* Картинка справа */
+                flex-direction: row-reverse;
                 justify-content: center;
                 align-items: center;
                 gap: 5vw;
                 padding: 0 5vw;
             }
-            
             .cutscene-img-block {
-                width: 45vh; /* Привязка к высоте экрана */
+                width: 45vh;
                 height: 45vh;
             }
-
             .cutscene-text-block {
-                align-items: flex-start; /* Текст слева */
+                align-items: flex-start;
                 text-align: left;
             }
-            
             .cutscene-text-block .dialogue-box {
                 margin-top: 0;
-                font-size: 3vmin; /* Чуть меньше шрифт в ландшафте */
+                font-size: 3vmin;
             }
-            
             .cutscene-text-block h1 {
                 text-align: left;
                 width: 100%;
                 margin-top: 0;
             }
-            
             .cutscene-text-block .btn {
                 align-self: center;
             }
-            
-            /* Меню в ландшафте */
             #menu {
                 justify-content: flex-end; 
                 padding-bottom: 5vh;
             }
         }
 
-        /* Специфично для вертикальной ориентации (портрет) */
         @media (orientation: portrait) {
             .cutscene-layout {
-                justify-content: center; /* Центрируем по вертикали */
+                justify-content: center;
             }
-            
-            /* Если экран очень узкий/высокий, картинку можно сделать чуть больше */
             .cutscene-img-block {
                 width: 60vw;
                 height: 60vw;
                 max-width: 300px;
                 max-height: 300px;
             }
-            
-            /* Меню в портрете - центрируем или прибиваем к низу */
             #menu {
                 justify-content: flex-end;
-                padding-bottom: 15vh; /* Отступ снизу под пальцы */
+                padding-bottom: 15vh;
             }
-            
             .menu-title {
-                font-size: 9vw; /* Крупнее на телефоне */
+                font-size: 9vw;
             }
         }
 
         /* Фон меню */
         .menu-bg-container {
-            position: fixed; /* Fixed чтобы не дергался при скролле (хотя скролла нет) */
+            position: fixed;
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
             z-index: -1; 
         }
-        
         .menu-bg-blur {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -379,7 +362,6 @@
             filter: blur(20px) brightness(0.5);
             transform: scale(1.1);
         }
-        
         .menu-bg-main {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -387,299 +369,231 @@
             object-position: center top; 
         }
 
-        /* --- НОВЫЙ ДИЗАЙН ЭКРАНА ЗАГРУЗКИ (Обновлен) --- */
+        /* ========================================= */
+        /* === ЭКРАН ЗАГРУЗКИ (V6 - Corrected Layers) === */
+        /* ========================================= */
+        
         #loading-screen {
-            background: linear-gradient(180deg, #87CEEB 0%, #caf0f8 60%, #4facfe 100%);
-            z-index: 2000;
+            background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 50%, #E1F5FE 100%);
+            z-index: 3000;
+            padding: 0;
+            display: block;
+        }
+
+        .loading-top-ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5vmin;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .loading-scene {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45%; 
+            z-index: 10;
             overflow: hidden;
         }
 
         /* Солнце */
         .sun {
             position: absolute;
-            top: 5vh;
-            right: 5vw;
+            top: 5vmin;
+            right: 5vmin;
             width: 12vmin;
             height: 12vmin;
-            background: radial-gradient(circle, #ffd700 40%, rgba(255, 215, 0, 0.5) 70%, rgba(255, 215, 0, 0) 100%);
+            background: #FDB813;
             border-radius: 50%;
-            animation: sunPulse 4s infinite alternate;
+            box-shadow: 0 0 30px #FDB813, 0 0 60px #FF9800;
             z-index: 1;
+            animation: sunPulse 3s infinite alternate;
         }
-        @keyframes sunPulse {
-            from { transform: scale(1); opacity: 0.9; }
-            to { transform: scale(1.1); opacity: 1; }
-        }
+        @keyframes sunPulse { from { transform: scale(1); } to { transform: scale(1.1); } }
 
         /* Облака */
         .cloud {
             position: absolute;
-            background: rgba(255, 255, 255, 0.9);
+            background: #fff;
             border-radius: 50px;
-            animation: moveCloud linear infinite;
-            z-index: 1;
+            opacity: 0.9;
+            z-index: 2;
+            animation: cloudFloat linear infinite;
         }
-        .cloud::after { content: ''; position: absolute; background: inherit; border-radius: 50%; width: 50%; height: 150%; top: -50%; left: 15%; }
-        .cloud::before { content: ''; position: absolute; background: inherit; border-radius: 50%; width: 40%; height: 120%; top: -40%; right: 15%; }
-        .c1 { width: 18vmin; height: 5vmin; top: 10vh; left: -20vw; animation-duration: 45s; opacity: 0.95; }
-        .c2 { width: 14vmin; height: 4vmin; top: 20vh; left: -10vw; animation-duration: 60s; animation-delay: 5s; opacity: 0.8; }
-        .c3 { width: 10vmin; height: 3vmin; top: 5vh; left: -30vw; animation-duration: 80s; animation-delay: 15s; opacity: 0.7; }
+        .cloud::after, .cloud::before { content:''; position:absolute; background:inherit; border-radius:50%; }
+        .cloud::after { width: 50%; height: 150%; top: -60%; left: 30%; }
+        .cloud::before { width: 40%; height: 120%; top: -40%; left: 10%; }
+        
+        .c1 { width: 20vmin; height: 6vmin; top: 15%; left: -20%; animation-duration: 25s; }
+        .c2 { width: 15vmin; height: 5vmin; top: 25%; left: -10%; animation-duration: 35s; animation-delay: 2s; opacity: 0.7; }
 
-        @keyframes moveCloud {
-            0% { transform: translateX(-30vw); }
-            100% { transform: translateX(130vw); }
-        }
+        @keyframes cloudFloat { from { transform: translateX(0); } to { transform: translateX(120vw); } }
 
-        /* Острова с пальмами */
-        .island {
+        /* Острова - Z-Index 4: ПЕРЕД темной волной, но ЗА кораблем */
+        .island-layer {
             position: absolute;
-            background: #d4a76a;
-            border-radius: 60% 60% 0 0;
-            bottom: 25vh; /* Поднимаем острова выше уровня воды */
-            z-index: 2; /* За кораблем и волнами */
-            box-shadow: inset -5px 0 10px rgba(0,0,0,0.2);
-        }
-        .island-1 {
-            width: 25vmin;
-            height: 12vmin;
-            left: 5vw;
-        }
-        .island-2 {
-            width: 35vmin;
-            height: 15vmin;
-            right: 5vw;
-            bottom: 27vh;
-            background: #c59b60;
-        }
-
-        /* Пальма */
-        .palm {
-            position: absolute;
-            bottom: 85%;
-            left: 50%;
-            width: 1.5vmin;
-            height: 10vmin;
-            background: #8b4513;
-            border-radius: 50% 50% 0 0;
-            transform-origin: bottom center;
-            transform: rotate(-10deg);
-        }
-        .palm-leaves {
-            position: absolute;
-            top: -6vmin;
-            left: -8vmin;
-            width: 16vmin;
-            height: 8vmin;
-        }
-        .leaf {
-            position: absolute;
-            width: 8vmin;
-            height: 2.5vmin;
-            background: #2ecc71;
-            border-radius: 50% 0 50% 0;
-            top: 50%;
-            left: 50%;
-            transform-origin: 0 50%;
-        }
-        .l1 { transform: rotate(-40deg); }
-        .l2 { transform: rotate(0deg); }
-        .l3 { transform: rotate(140deg); background: #27ae60; }
-        .l4 { transform: rotate(190deg); background: #27ae60; }
-
-        /* Кораблик */
-        .ship-container {
-            position: absolute;
-            bottom: 18vh; /* Позиция между волнами */
-            left: 50%;
-            width: 16vmin;
-            height: 16vmin;
-            transform: translateX(-50%);
-            z-index: 4; /* Между волнами */
-            animation: shipBob 4s ease-in-out infinite;
-        }
-        .ship-hull {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            bottom: 5%; /* Опустили слой островов ниже (было 15%) */
             width: 100%;
-            height: 35%;
-            background: #5d4037;
-            border-radius: 5% 5% 45% 45%; 
-            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.3);
-        }
-        .ship-stripe {
-            position: absolute;
-            top: 15%;
-            left: 0;
-            width: 100%;
-            height: 15%;
-            background: #8d6e63;
-        }
-        .ship-mast-main {
-            position: absolute;
-            bottom: 30%;
-            left: 48%;
-            width: 4%;
-            height: 60%;
-            background: #3e2723;
-        }
-        .ship-sail-main {
-            position: absolute;
-            bottom: 45%;
-            left: 52%;
-            width: 40%;
-            height: 40%;
-            background: #fdfefe;
-            border-radius: 0 50% 50% 5%;
-            box-shadow: inset -2px 0 5px rgba(0,0,0,0.1);
-            transform: skewX(-5deg);
-        }
-        .ship-flag {
-            position: absolute;
-            top: 10%;
-            left: 52%;
-            width: 20%;
-            height: 10%;
-            background: #d32f2f;
-            clip-path: polygon(0 0, 100% 50%, 0 100%);
-            animation: flagWave 1s ease-in-out infinite alternate;
-        }
-
-        @keyframes shipBob {
-            0% { transform: translateX(-50%) translateY(0) rotate(1deg); }
-            50% { transform: translateX(-50%) translateY(2vmin) rotate(-1deg); }
-            100% { transform: translateX(-50%) translateY(0) rotate(1deg); }
-        }
-        @keyframes flagWave {
-            from { transform: scaleX(1); }
-            to { transform: scaleX(0.9); }
-        }
-
-        /* Океан - Слои натуральной воды */
-        .ocean {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 35vh; /* Занимает нижние 35% экрана */
-            overflow: hidden;
-            z-index: 3;
+            height: 20vh;
+            z-index: 4; 
             pointer-events: none;
         }
-
-        .wave {
+        .island {
             position: absolute;
             bottom: 0;
-            left: 0;
-            width: 200%;
-            height: 100%;
-            background-repeat: repeat-x;
-            background-size: 50% 100%;
-            transform: translate3d(0, 0, 0);
+            background: #D4A76A;
+            border-radius: 50% 50% 0 0;
+            box-shadow: inset -5px 0 15px rgba(0,0,0,0.1);
         }
-
-        /* SVG волны разных цветов для глубины */
-        .w1 {
-            /* Темно-синяя (дальняя) */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%231e3c72'/%3E%3C/svg%3E");
-            z-index: 3;
-            animation: waveMove 20s linear infinite;
-            height: 30vh;
-            bottom: 0;
-            opacity: 1;
+        /* ЛЕВЫЙ ОСТРОВ */
+        .island-left { 
+            width: 35vmin; 
+            height: 15vmin; 
+            left: 5%; 
+            transform: rotate(-15deg); 
+            transform-origin: bottom left; 
+            bottom: -10vh; /* Приподняли немного (было -15vh) */
+        }
+        .island-right { 
+            width: 25vmin; 
+            height: 10vmin; 
+            right: 8%; 
+            background: #C59B60; 
+            transform: rotate(15deg); 
+            transform-origin: bottom right; 
+            bottom: -8vh; 
         }
         
-        .w2 {
-             /* Средняя (Синяя) */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%232a5298'/%3E%3C/svg%3E");
-            z-index: 5; /* Перед кораблем */
-            animation: waveMove 15s linear infinite reverse;
-            height: 20vh;
+        /* Пальмы */
+        .palm-tree { position: absolute; bottom: 85%; left: 50%; width: 1.5vmin; height: 10vmin; background: #5D4037; border-radius: 50% 50% 0 0; transform-origin: bottom center; }
+        .palm-leaves { position: absolute; top: -6vmin; left: -8vmin; width: 16vmin; height: 8vmin; }
+        .p-leaf { position: absolute; width: 8vmin; height: 2.5vmin; background: #2E7D32; border-radius: 50% 0 50% 0; top: 50%; left: 50%; transform-origin: 0 50%; }
+        .pl1 { transform: rotate(-30deg); } .pl2 { transform: rotate(10deg); } .pl3 { transform: rotate(150deg); background: #388E3C; } .pl4 { transform: rotate(190deg); background: #388E3C; }
+
+        /* --- НОВЫЙ ЭФФЕКТ ВОДЫ (CSS WAVES) --- */
+        .ocean-layer {
+            position: absolute;
             bottom: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 4;
+        }
+        
+        /* Общий стиль волны */
+        .css-wave {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250vw; 
+            height: 250vw;
+            /* Увеличили скругление, чтобы волны были более плоскими и спокойными */
+            border-radius: 48%; 
+            animation: rotateWave linear infinite;
+        }
+
+        /* Z-INDEX ПОРЯДОК ОБНОВЛЕН:
+           3. Темная волна (w1)
+           4. Острова
+           5. Корабль (теперь тут)
+           6. Средняя волна (w2) (теперь перекрывает корабль)
+           7. Ближняя волна (w3)
+        */
+
+        .w1 {
+            bottom: -242vw; 
+            background-color: #1976D2;
             opacity: 0.9;
+            z-index: 3; 
+            animation-duration: 25s; 
+        }
+
+        .w2 {
+            bottom: -244vw;
+            background-color: #2196F3;
+            opacity: 0.8;
+            z-index: 6; /* Увеличили Z-Index (было 5), теперь ПЕРЕД кораблем */
+            animation-duration: 20s; 
+            border-radius: 48.5%; 
         }
 
         .w3 {
-            /* Светлая (ближняя) */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%234facfe'/%3E%3C/svg%3E");
-            z-index: 6;
-            animation: waveMove 8s linear infinite;
-            height: 10vh;
-            bottom: -1vh;
-            opacity: 0.95;
+            bottom: -246vw;
+            background-color: #64B5F6;
+            opacity: 0.8;
+            z-index: 7; 
+            animation-duration: 15s; 
+            border-radius: 49%; 
         }
 
-        @keyframes waveMove {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        @keyframes rotateWave {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
         }
 
-        /* Контент загрузки */
+        /* ФРЕГАТ */
+        .frigate {
+            position: absolute;
+            bottom: 24%; /* Поднял выше (было 14%) */
+            left: 50%;
+            width: 25vmin;
+            height: 25vmin;
+            z-index: 5; /* ПЕРЕД островами, МЕЖДУ волнами w1 и w2 */
+            transform: translateX(-50%);
+            animation: shipSway 4s ease-in-out infinite;
+        }
+
+        .hull {
+            position: absolute; bottom: 0; left: 10%; width: 80%; height: 25%; background: #3E2723; border-radius: 10% 10% 45% 45%; box-shadow: inset 0 -5px 0 rgba(0,0,0,0.3);
+        }
+        .hull::after { content: ''; position: absolute; top: 20%; left: 0; width: 100%; height: 20%; background: #8D6E63; }
+        .gunport { position: absolute; top: 50%; width: 1vmin; height: 1vmin; background: #000; border-radius: 2px; }
+        
+        .mast { position: absolute; bottom: 25%; width: 1.5%; background: #281916; }
+        .m1 { left: 25%; height: 50%; } 
+        .m2 { left: 50%; height: 65%; } 
+        .m3 { left: 75%; height: 50%; } 
+
+        .sail { position: absolute; background: #F5F5F5; border-radius: 5px; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); width: 12%; left: -500%; }
+        .m1 .s1 { bottom: 10%; height: 30%; width: 600%; left: -250%; }
+        .m1 .s2 { bottom: 50%; height: 25%; width: 500%; left: -200%; }
+        .m2 .s1 { bottom: 10%; height: 30%; width: 800%; left: -350%; }
+        .m2 .s2 { bottom: 50%; height: 25%; width: 700%; left: -300%; }
+        .m3 .s1 { bottom: 10%; height: 30%; width: 500%; left: -200%; }
+
+        .flag { position: absolute; top: -10%; left: 0; width: 300%; height: 10%; background: #D32F2F; clip-path: polygon(0 0, 100% 50%, 0 100%); animation: flagFlutter 1s infinite alternate; }
+
+        @keyframes shipSway { 0%, 100% { transform: translateX(-50%) rotate(1deg) translateY(0); } 50% { transform: translateX(-50%) rotate(-1deg) translateY(1vmin); } }
+        @keyframes flagFlutter { from { transform: scaleX(1); } to { transform: scaleX(0.8); } }
+
+        /* Текст */
         .loading-content {
-            position: relative;
-            z-index: 20;
-            background: #fff8e1; /* Цвет пергамента */
-            padding: 4vmin;
+            background: #FFF3E0;
+            border: 0.8vmin solid #5D4037;
             border-radius: 15px;
-            border: 3px solid #8b4513;
-            max-width: 800px;
+            padding: 4vmin;
             width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            max-width: 700px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             text-align: left;
-            margin-top: -20vmin; /* Поднимаем повыше */
+            position: relative;
         }
+        .loading-content::before, .loading-content::after { content: ''; position: absolute; top: 1vmin; width: 1.5vmin; height: 1.5vmin; background: #3E2723; border-radius: 50%; }
+        .loading-content::before { left: 1vmin; } .loading-content::after { right: 1vmin; }
 
-        /* --- ЭФФЕКТ ПЕСЧАНОГО ТЕКСТА --- */
         #loading-text, .dialogue-text-sand {
-            font-family: 'Comfortaa', cursive; 
-            font-size: 2.8vmin;
-            font-weight: bold;
-            line-height: 1.5;
-            min-height: 12vmin;
-            color: #5d4037;
+            font-family: 'Comfortaa', cursive; font-size: 2.8vmin; font-weight: bold; line-height: 1.5; color: #5D4037; min-height: 15vmin;
         }
-
-        .sand-word {
-            display: inline-block;
-            margin-right: 0.3em;
-            opacity: 0;
-            animation: sandForm 1.5s ease-out forwards;
-        }
-
-        @keyframes sandForm {
-            0% {
-                opacity: 0;
-                transform: translateY(10px) scale(1.5);
-                filter: blur(8px);
-                color: #e6c288;
-                text-shadow: 0 0 20px #e6c288;
-            }
-            60% {
-                opacity: 1;
-                filter: blur(2px);
-                color: #bcaaa4;
-                text-shadow: 0 0 5px #e6c288;
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-                color: #5d4037;
-                text-shadow: none;
-            }
-        }
-
-        #loading-continue-btn {
-            opacity: 0;
-            transition: opacity 1s;
-            margin: 2vmin auto 0;
-            display: block;
-            background: linear-gradient(180deg, #27ae60 0%, #2ecc71 100%);
-            box-shadow: 0 0.6vmin 0 #1e8449;
-        }
+        .sand-word { display: inline-block; margin-right: 0.3em; opacity: 0; animation: sandForm 1s ease-out forwards; }
+        @keyframes sandForm { 0% { opacity: 0; filter: blur(5px); transform: translateY(10px) scale(1.2); color: #FFB74D; } 100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); color: #5D4037; } }
+        #loading-continue-btn { opacity: 0; transition: opacity 1s; margin: 2vmin auto 0; display: block; background: linear-gradient(180deg, #43A047 0%, #2E7D32 100%); box-shadow: 0 0.5vmin 0 #1B5E20; }
     </style>
 </head>
 <body>
@@ -697,43 +611,61 @@
         </div>
     </div>
 
-    <!-- ЭКРАН ЗАГРУЗКИ / КРАСОЧНЫЙ -->
+    <!-- НОВЫЙ ЭКРАН ЗАГРУЗКИ -->
     <div id="loading-screen" class="overlay-screen" onclick="skipTypewriter()">
-        <!-- Атмосфера -->
-        <div class="sun"></div>
-        <div class="cloud c1"></div>
-        <div class="cloud c2"></div>
-        <div class="cloud c3"></div>
-
-        <!-- Острова (на горизонте) -->
-        <div class="island island-1">
-            <div class="palm"><div class="palm-leaves"><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div></div></div>
-        </div>
-        <div class="island island-2"></div>
-
-        <!-- Кораблик (между волнами) -->
-        <div class="ship-container">
-            <div class="ship-mast-main">
-                <div class="ship-flag"></div>
-            </div>
-            <div class="ship-sail-main"></div>
-            <div class="ship-hull">
-                <div class="ship-stripe"></div>
+        <div class="loading-top-ui">
+            <div class="loading-content">
+                <div style="font-family: 'Kelly Slab'; font-size: 4vmin; color: #E65100; margin-bottom: 2vmin; text-align: center; border-bottom: 2px solid #E65100; padding-bottom: 1vmin;">📜 О проекте</div>
+                <div id="loading-text"></div>
+                <button id="loading-continue-btn" class="btn" onclick="enterMenu()">Вперёд!</button>
             </div>
         </div>
-        
-        <!-- Океан (слои натуральной воды) -->
-        <div class="ocean">
-            <div class="wave w1"></div> <!-- Дальняя (Темная) -->
-            <div class="wave w2"></div> <!-- Средняя -->
-            <div class="wave w3"></div> <!-- Ближняя (Светлая) -->
-        </div>
 
-        <!-- Контент (текст появляется "из песка") -->
-        <div class="loading-content">
-            <div style="font-family: 'Kelly Slab'; font-size: 4vmin; color: #d35400; margin-bottom: 1vmin; text-align: center;">📜 Информация о проекте</div>
-            <div id="loading-text"></div>
-            <button id="loading-continue-btn" class="btn" onclick="enterMenu()">Продолжить</button>
+        <div class="loading-scene">
+            <div class="sun"></div>
+            <div class="cloud c1"></div>
+            <div class="cloud c2"></div>
+
+            <!-- Самый дальний слой: Темная волна -->
+            <div class="css-wave w1"></div> 
+
+            <!-- Слой островов (стоит ЗА кораблем, но ПЕРЕД темной волной) -->
+            <div class="island-layer">
+                <div class="island island-left">
+                    <div class="palm-tree" style="left:20%; height:7vmin; transform: rotate(-15deg);"><div class="palm-leaves"><div class="p-leaf pl1"></div><div class="p-leaf pl2"></div><div class="p-leaf pl3"></div><div class="p-leaf pl4"></div></div></div>
+                    <div class="palm-tree" style="left:50%; height:10vmin;"><div class="palm-leaves"><div class="p-leaf pl1"></div><div class="p-leaf pl2"></div><div class="p-leaf pl3"></div><div class="p-leaf pl4"></div></div></div>
+                    <div class="palm-tree" style="left:80%; height:6vmin; transform: rotate(10deg);"><div class="palm-leaves"><div class="p-leaf pl1"></div><div class="p-leaf pl2"></div><div class="p-leaf pl3"></div><div class="p-leaf pl4"></div></div></div>
+                </div>
+                <div class="island island-right">
+                     <div class="palm-tree" style="left:50%; height:9vmin; transform: rotate(5deg);"><div class="palm-leaves"><div class="p-leaf pl1"></div><div class="p-leaf pl2"></div><div class="p-leaf pl3"></div><div class="p-leaf pl4"></div></div></div>
+                </div>
+            </div>
+            
+            <!-- Корабль (ПЕРЕД островами) -->
+            <div class="frigate">
+                <div class="mast m1"> 
+                    <div class="sail s1"></div>
+                    <div class="sail s2"></div>
+                </div>
+                <div class="mast m2"> 
+                    <div class="sail s1"></div>
+                    <div class="sail s2"></div>
+                    <div class="flag"></div>
+                </div>
+                <div class="mast m3"> 
+                    <div class="sail s1"></div>
+                </div>
+                <div class="hull">
+                    <div class="gunport" style="left: 20%;"></div>
+                    <div class="gunport" style="left: 40%;"></div>
+                    <div class="gunport" style="left: 60%;"></div>
+                    <div class="gunport" style="left: 80%;"></div>
+                </div>
+            </div>
+
+            <!-- Передние волны -->
+            <div class="css-wave w2"></div> 
+            <div class="css-wave w3"></div> 
         </div>
     </div>
 
@@ -754,7 +686,6 @@
             </div>
         </div>
 
-        <!-- Контейнер для контента меню, чтобы он всегда был внизу, но не перекрывался -->
         <div style="margin-top: auto; width: 100%; display: flex; flex-direction: column; align-items: center;">
             <div class="menu-title">Приключения юного<br>пирата Чибика</div>
             <div class="menu-subtitle">Глава 1. Демо уровень</div>
@@ -939,7 +870,6 @@
     // --- ЛОГИКА ЭКРАНА ЗАГРУЗКИ ---
     const loadingTextFull = "Добро Пожаловать! Это прототип (MVP) одного из уровней находящейся в разработке Обучающей Игры для Детей, в данном уровне Ребёнок играючи изучает и запоминает Алфавит. Так же в игре будут игры для изучения Базовому Русскому Языку (грамматика и пунктуация) и базовая математика.";
     
-    // Новая логика появления текста "из песка" по словам
     function playSandAnimation(elementId, text = null) {
         const container = document.getElementById(elementId);
         const content = text || container.textContent;
