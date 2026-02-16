@@ -387,30 +387,28 @@
 
         /* ВЕРХНЯЯ ЧАСТЬ: Контент (Гибкая высота) */
         .loading-top-ui {
-            flex: 1; /* Занимает всё доступное место */
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 45%; /* Уменьшили верхнюю часть, чтобы дать место воде */
             display: flex;
-            flex-direction: column;
-            justify-content: center; /* Центрируем контент по вертикали */
+            justify-content: center;
             align-items: center;
             z-index: 100;
             padding: 20px;
         }
 
-        /* НИЖНЯЯ ЧАСТЬ: Сцена (Фиксированная или гибкая высота) */
         .loading-scene {
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            height: 45vmin; /* Высота зависит от мин. стороны экрана (не ломается в гориз.) */
-            min-height: 250px; /* Минимальная высота для красоты */
-            max-height: 50%; /* Не больше половины экрана */
-            position: relative;
+            height: 55%; /* Увеличили высоту моря (было 45%) */
             z-index: 10;
-            /* flex-shrink: 0; запрещаем сжимать сцену */
-            flex-shrink: 0; 
+            overflow: hidden;
         }
 
-        /* --- ЭЛЕМЕНТЫ СЦЕНЫ --- */
-        
         /* Солнце */
         .sun {
             position: absolute;
@@ -448,9 +446,9 @@
         /* Острова - Позиционирование в % от высоты СЦЕНЫ */
         .island-layer {
             position: absolute;
-            bottom: 25%; /* Четкая привязка к воде */
+            bottom: 12%; /* Опустили слой островов ниже (было 25%) */
             width: 100%;
-            height: 100%; /* Контейнер на всю высоту сцены */
+            height: 100%; 
             z-index: 4; 
             pointer-events: none;
         }
@@ -464,12 +462,14 @@
         /* ЛЕВЫЙ ОСТРОВ */
         .island-left { 
             width: 35vmin; height: 15vmin; left: 5%; 
-            transform: rotate(-15deg); transform-origin: bottom left; bottom: -20%; 
+            transform: rotate(-15deg); transform-origin: bottom left; 
+            bottom: -25%; /* Еще глубже (было -20%) */
         }
         /* ПРАВЫЙ ОСТРОВ */
         .island-right { 
             width: 25vmin; height: 10vmin; right: 8%; 
-            background: #C59B60; transform: rotate(15deg); transform-origin: bottom right; bottom: -10%; 
+            background: #C59B60; transform: rotate(15deg); transform-origin: bottom right; 
+            bottom: -15%; /* Еще глубже (было -10%) */
         }
         
         /* Пальмы */
@@ -507,16 +507,17 @@
         */
         
         /* Позиционирование волн относительно НИЗА сцены */
+        /* Подняли волны выше (значения less negative), чтобы воды было больше */
         .w1 {
-            bottom: -242vw; 
+            bottom: -238vw; /* Было -242vw */
             background-color: #1976D2; opacity: 0.9; z-index: 3; animation-duration: 25s; 
         }
         .w2 {
-            bottom: -244vw;
+            bottom: -240vw; /* Было -244vw */
             background-color: #2196F3; opacity: 0.8; z-index: 5; animation-duration: 20s; border-radius: 48.5%; 
         }
         .w3 {
-            bottom: -246vw;
+            bottom: -242vw; /* Было -246vw */
             background-color: #64B5F6; opacity: 0.8; z-index: 7; animation-duration: 15s; border-radius: 49%; 
         }
 
@@ -528,7 +529,7 @@
         /* ФРЕГАТ */
         .frigate {
             position: absolute;
-            bottom: 30%; /* Относительно высоты сцены */
+            bottom: 10%; /* Опустили корабль ниже (было 30%) */
             left: 50%;
             width: 25vmin;
             height: 25vmin;
