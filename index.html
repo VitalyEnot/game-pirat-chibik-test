@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Приключения Юного Пирата Чибика</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Kelly+Slab&display=swap');
+
+        /* Сброс и базовые настройки */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #1a0a00;
+            font-family: 'Comfortaa', cursive;
+            user-select: none;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            position: fixed; /* Фиксируем body, чтобы избежать скролла страницы */
+            width: 100%;
+            height: 100%;
+        }
+
+        #game-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        canvas {
+            background: #222;
+            cursor: pointer;
+            display: block;
+        }
+
+        /* UI слой поверх канваса */
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 10;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .top-bar {
+            padding: 2vmin;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .alphabet-progress {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1.5vmin 2vmin;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            color: white;
+            max-width: 60%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5vmin;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .letter-slot {
+            font-size: 2.5vmin;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+
+        .letter-slot.active {
+            opacity: 1;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transform: scale(1.2);
+        }
+
+        .right-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1.5vmin;
+            pointer-events: auto;
+        }
+
+        .lives {
+            font-size: 4vmin;
+            color: #ff4444;
+            filter: drop-shadow(0 0 5px black);
+        }
+
+        .pause-btn {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            border-radius: 20px;
+            padding: 1vmin 2.5vmin;
+            font-size: 2.5vmin;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Kelly Slab', serif;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pause-btn:hover {
+            background: rgba(255, 215, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Полноэкранные слои (Меню, Катсцены) */
+        .overlay-screen {
+            position: fixed; /* Используем fixed для надежного покрытия viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            z-index: 100;
+            pointer-events: all;
+            overflow-y: auto; /* Разрешаем скролл, если контент не влезает */
+            overflow-x: hidden;
+            /* Учет "челок" и системных баров */
+            padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+        }
+
+        .menu-title {
+            font-family: 'Kelly Slab', serif;
+            font-size: 8vmin;
+            color: #ffd700;
+            margin-bottom: 1vmin;
+            text-shadow: 0 0 15px black, 0 4px 0 #8b4513;
+            text-align: center;
+            line-height: 1.1;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .menu-subtitle {
+            font-family: 'Kelly Slab', serif;
+            font-size: 5vmin;
+            color: #ffffff;
+            margin-bottom: 2vmin;
+            text-shadow: 2px 2px 4px black;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .menu-desc {
+            font-family: 'Comfortaa', cursive;
+            font-size: 3vmin;
+            color: #ddd;
+            margin-bottom: 4vmin;
+            max-width: 90%;
+            text-shadow: 1px 1px 3px black;
+            text-align: center;
+            background: rgba(0,0,0,0.6);
+            padding: 1.5vmin 3vmin;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        h1 {
+            font-family: 'Kelly Slab', serif;
+            font-size: 6vmin;
+            color: #ffd700;
+            margin-bottom: 3vmin;
+            text-shadow: 0.5vmin 0.5vmin 0 #8b4513;
+        }
+
+        .btn {
+            background: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
+            border: 2px solid #fff;
+            padding: 2vmin 5vmin;
+            font-size: 3.5vmin; /* Чуть крупнее для пальцев */
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 1vmin;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Comfortaa', cursive;
+            box-shadow: 0 0.6vmin 0 #a04000, 0 1vmin 10px rgba(0,0,0,0.5);
+            width: 90%; /* Шире на мобильных */
+            max-width: 450px;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+            z-index: 2;
+            white-space: nowrap; /* Чтобы текст не ехал */
+        }
+
+        .btn:hover {
+            transform: scale(1.02) translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0.2vmin 0 #a04000;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .dialogue-box {
+            position: relative;
+            background: #fff8e1;
+            color: #5d4037;
+            padding: 4vmin;
+            border: 0.8vmin solid #8b4513;
+            border-radius: 20px;
+            width: 95%; /* Шире на мобильных */
+            max-width: 700px;
+            font-size: 3.5vmin;
+            pointer-events: all;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            margin-top: 2vmin;
+            line-height: 1.4;
+        }
+
+        #current-goal {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 5px 15px;
+            border-radius: 10px;
+            border: 1px solid gold;
+            font-size: 3vmin;
+        }
+        
+        #cur-hint {
+             font-size: 4vmin;
+        }
+
+        /* --- Адаптивная вёрстка Катсцен --- */
+        .cutscene-layout {
+            display: flex;
+            flex-direction: column; /* Мобильный first: вертикально */
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%; /* Стараемся занять всю высоту */
+            gap: 2vh;
+        }
+
+        /* Контейнер для картинки */
+        .cutscene-img-block {
+            width: 50vmin; /* Квадрат, зависящий от мин. стороны экрана */
+            height: 50vmin;
+            flex-shrink: 0; /* Не сжимать картинку */
+            border: 0.8vmin solid #8b4513;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            background: #000;
+        }
+
+        .cutscene-img-block img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Текстовый блок */
+        .cutscene-text-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            /* Если экран маленький, даем возможность скроллить текст, но не скрывать его */
+            flex-shrink: 1; 
+        }
+
+        /* Специфично для горизонтальной ориентации (ландшафт) */
+        @media (orientation: landscape) {
+            .cutscene-layout {
+                flex-direction: row-reverse; /* Картинка справа */
+                justify-content: center;
+                align-items: center;
+                gap: 5vw;
+                padding: 0 5vw;
+            }
+            
+            .cutscene-img-block {
+                width: 45vh; /* Привязка к высоте экрана */
+                height: 45vh;
+            }
+
+            .cutscene-text-block {
+                align-items: flex-start; /* Текст слева */
+                text-align: left;
+            }
+            
+            .cutscene-text-block .dialogue-box {
+                margin-top: 0;
+                font-size: 3vmin; /* Чуть меньше шрифт в ландшафте */
+            }
+            
+            .cutscene-text-block h1 {
+                text-align: left;
+                width: 100%;
+                margin-top: 0;
+            }
+            
+            .cutscene-text-block .btn {
+                align-self: center;
+            }
+            
+            /* Меню в ландшафте */
+            #menu {
+                justify-content: flex-end; 
+                padding-bottom: 5vh;
+            }
+        }
+
+        /* Специфично для вертикальной ориентации (портрет) */
+        @media (orientation: portrait) {
+            .cutscene-layout {
+                justify-content: center; /* Центрируем по вертикали */
+            }
+            
+            /* Если экран очень узкий/высокий, картинку можно сделать чуть больше */
+            .cutscene-img-block {
+                width: 60vw;
+                height: 60vw;
+                max-width: 300px;
+                max-height: 300px;
+            }
+            
+            /* Меню в портрете - центрируем или прибиваем к низу */
+            #menu {
+                justify-content: flex-end;
+                padding-bottom: 15vh; /* Отступ снизу под пальцы */
+            }
+            
+            .menu-title {
+                font-size: 9vw; /* Крупнее на телефоне */
+            }
+        }
+
+        /* Фон меню */
+        .menu-bg-container {
+            position: fixed; /* Fixed чтобы не дергался при скролле (хотя скролла нет) */
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+        }
+        
+        .menu-bg-blur {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            filter: blur(20px) brightness(0.5);
+            transform: scale(1.1);
+        }
+        
+        .menu-bg-main {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: contain;
+            object-position: center top; 
+        }
+
+        /* --- НОВЫЙ ДИЗАЙН ЭКРАНА ЗАГРУЗКИ --- */
+        #loading-screen {
+            background: linear-gradient(180deg, #87CEEB 0%, #4facfe 100%);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 5vmin;
+            overflow: hidden;
+        }
+
+        /* Солнце */
+        .sun {
+            position: absolute;
+            top: 10vmin;
+            right: 10vmin;
+            width: 15vmin;
+            height: 15vmin;
+            background: radial-gradient(circle, #ffd700 40%, rgba(255, 215, 0, 0.5) 70%, rgba(255, 215, 0, 0) 100%);
+            border-radius: 50%;
+            animation: sunPulse 4s infinite alternate;
+        }
+        @keyframes sunPulse {
+            from { transform: scale(1); opacity: 0.9; }
+            to { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Облака */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            animation: moveCloud linear infinite;
+        }
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+            width: 50%;
+            height: 150%;
+            top: -50%;
+            left: 15%;
+        }
+        .cloud::before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+            width: 40%;
+            height: 120%;
+            top: -40%;
+            right: 15%;
+        }
+        .c1 { width: 20vmin; height: 6vmin; top: 15vmin; left: -25vmin; animation-duration: 25s; opacity: 0.9; }
+        .c2 { width: 15vmin; height: 5vmin; top: 30vmin; left: -20vmin; animation-duration: 35s; animation-delay: 5s; opacity: 0.7; }
+        .c3 { width: 12vmin; height: 4vmin; top: 8vmin; left: -15vmin; animation-duration: 45s; animation-delay: 10s; opacity: 0.6; }
+
+        @keyframes moveCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(120vw); }
+        }
+
+        /* Острова с пальмами */
+        .island {
+            position: absolute;
+            background: #d4a76a;
+            border-radius: 50% 50% 0 0;
+            bottom: -5px; /* Скрываем низ */
+            z-index: 2;
+            box-shadow: inset -5px 0 10px rgba(0,0,0,0.2);
+        }
+        .island-1 {
+            width: 30vmin;
+            height: 10vmin;
+            left: 5vmin;
+        }
+        .island-2 {
+            width: 40vmin;
+            height: 12vmin;
+            right: 5vmin;
+            background: #c59b60;
+        }
+
+        /* Пальма (CSS) */
+        .palm {
+            position: absolute;
+            bottom: 80%;
+            left: 50%;
+            width: 2vmin;
+            height: 12vmin;
+            background: #8b4513;
+            border-radius: 50% 50% 0 0;
+            transform-origin: bottom center;
+            transform: rotate(-5deg);
+        }
+        .palm-leaves {
+            position: absolute;
+            top: -8vmin;
+            left: -9vmin;
+            width: 20vmin;
+            height: 10vmin;
+        }
+        .leaf {
+            position: absolute;
+            width: 10vmin;
+            height: 3vmin;
+            background: #2ecc71;
+            border-radius: 50% 0 50% 0;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 50%;
+        }
+        .l1 { transform: rotate(-30deg); }
+        .l2 { transform: rotate(10deg); }
+        .l3 { transform: rotate(150deg); background: #27ae60; }
+        .l4 { transform: rotate(200deg); background: #27ae60; }
+
+        /* Кораблик */
+        .ship-container {
+            position: absolute;
+            bottom: 12vh;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4;
+            animation: shipBob 3s ease-in-out infinite;
+        }
+        .ship-body {
+            width: 12vmin;
+            height: 5vmin;
+            background: #5d4037;
+            border-radius: 0 0 5vmin 5vmin;
+            position: relative;
+        }
+        .ship-mast {
+            position: absolute;
+            bottom: 5vmin;
+            left: 50%;
+            width: 1vmin;
+            height: 8vmin;
+            background: #3e2723;
+            transform: translateX(-50%);
+        }
+        .ship-sail {
+            position: absolute;
+            bottom: 2vmin;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 4vmin solid transparent;
+            border-right: 0 solid transparent;
+            border-bottom: 6vmin solid #f0f0f0;
+            transform: translateX(0.5vmin); /* Сдвиг от мачты */
+        }
+        .ship-flag {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 2vmin solid #d32f2f;
+            border-top: 1vmin solid transparent;
+            border-bottom: 1vmin solid transparent;
+            transform: translateX(0.5vmin);
+        }
+
+        @keyframes shipBob {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(2deg); }
+            50% { transform: translateX(-50%) translateY(1vmin) rotate(-2deg); }
+        }
+
+        /* Волны */
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh;
+            overflow: hidden;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background-repeat: repeat-x;
+            background-size: 50% 100%;
+            opacity: 0.9;
+        }
+
+        /* SVG Волна (белая) */
+        .wave-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%23ffffff'/%3E%3C/svg%3E");
+        }
+
+        .wave-1 {
+            z-index: 7;
+            height: 8vh;
+            opacity: 0.9;
+            animation: moveWave 8s linear infinite;
+            filter: brightness(0.95); /* Чуть темнее белого */
+        }
+        .wave-2 {
+            z-index: 6;
+            height: 12vh;
+            bottom: 0;
+            opacity: 0.6;
+            animation: moveWave 12s linear infinite reverse;
+            filter: brightness(0.9);
+        }
+        .wave-3 {
+            z-index: 3;
+            height: 16vh;
+            bottom: 0;
+            opacity: 0.4;
+            animation: moveWave 18s linear infinite;
+        }
+
+        @keyframes moveWave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Контент загрузки */
+        .loading-content {
+            position: relative;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4vmin;
+            border-radius: 20px;
+            border: 4px solid #8b4513;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: left;
+            margin-top: -10vmin; /* Чуть поднять над водой */
+        }
+
+        #loading-text {
+            font-family: 'Comfortaa', monospace; 
+            color: #5d4037; 
+            font-size: 2.5vmin;
+            font-weight: bold;
+            line-height: 1.5;
+            white-space: pre-wrap; 
+            border-right: 3px solid #e67e22;
+            animation: blink-caret 0.75s step-end infinite;
+            margin-bottom: 2vmin;
+            min-height: 12vmin; 
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #e67e22; }
+        }
+
+        #loading-continue-btn {
+            opacity: 0;
+            transition: opacity 1s;
+            margin: 0 auto;
+            display: block;
+            background: linear-gradient(180deg, #27ae60 0%, #2ecc71 100%);
+            box-shadow: 0 0.6vmin 0 #1e8449;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="ui-overlay">
+        <div class="top-bar">
+            <div id="alphabet-ui" class="alphabet-progress"></div>
+            <div class="right-controls">
+                <div id="lives-ui" class="lives">❤️❤️❤️</div>
+                <button class="pause-btn" onclick="togglePause()">Пауза</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН ЗАГРУЗКИ / КРАСОЧНЫЙ -->
+    <div id="loading-screen" class="overlay-screen" onclick="skipTypewriter()">
+        <!-- Атмосфера -->
+        <div class="sun"></div>
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+
+        <!-- Острова -->
+        <div class="island island-1">
+            <div class="palm"><div class="palm-leaves"><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div></div></div>
+        </div>
+        <div class="island island-2"></div>
+
+        <!-- Кораблик -->
+        <div class="ship-container">
+            <div class="ship-mast">
+                <div class="ship-flag"></div>
+                <div class="ship-sail"></div>
+            </div>
+            <div class="ship-body"></div>
+        </div>
+        
+        <!-- Волны -->
+        <div class="wave-container">
+            <div class="wave wave-bg wave-3"></div>
+            <div class="wave wave-bg wave-2"></div>
+            <div class="wave wave-bg wave-1"></div>
+        </div>
+
+        <!-- Контент -->
+        <div class="loading-content">
+            <div style="font-family: 'Kelly Slab'; font-size: 4vmin; color: #d35400; margin-bottom: 1vmin; text-align: center;">📜 Информация о проекте</div>
+            <div id="loading-text"></div>
+            <button id="loading-continue-btn" class="btn" onclick="enterMenu()">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- Главное Меню -->
+    <div id="menu" class="overlay-screen hidden" style="background: none;">
+        
+        <div class="menu-bg-container">
+            <img id="menu-bg-blur" src="pirate_cover.jpg" 
+                 onerror="this.style.display='none';" 
+                 class="menu-bg-blur">
+            <img id="menu-bg-main" src="pirate_cover.jpg" 
+                 onerror="this.style.display='none'; document.getElementById('menu-fallback-bg').style.display='flex';" 
+                 class="menu-bg-main">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.9) 100%); pointer-events: none;"></div>
+            <div id="menu-fallback-bg" style="display:none; width: 100%; height: 100%; background: #1a0a00; align-items: center; justify-content: center; color: #777; flex-direction: column;">
+                <div style="font-size: 5vmin;">🏴‍☠️</div>
+                <div>Добавьте файл pirate_cover.jpg</div>
+            </div>
+        </div>
+
+        <!-- Контейнер для контента меню, чтобы он всегда был внизу, но не перекрывался -->
+        <div style="margin-top: auto; width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="menu-title">Приключения юного<br>пирата Чибика</div>
+            <div class="menu-subtitle">Глава 1. Демо уровень</div>
+            <div class="menu-desc">Обучающая игра для детей дошкольного и младшего школьного возраста</div>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5vmin; width: 100%; padding-bottom: 2vh;">
+                <button class="btn" onclick="startGame('very_easy')">Очень легкий (подсказки)</button>
+                <button class="btn" onclick="startGame('easy')">Легкий (3 жизни)</button>
+                <button class="btn" onclick="startGame('normal')">Нормальный (1 жизнь)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Катсцена 1: Легенда -->
+    <div id="cutscene1" class="overlay-screen hidden" style="background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);">
+        <div class="cutscene-layout">
+            <div class="cutscene-img-block">
+                <img src="catscen1.jpg" alt="Старец рассказывает легенду" 
+                     onerror="this.parentElement.style.background='#34495e'; this.style.display='none'; this.parentElement.innerHTML='<div style=\'color:#fff;display:flex;align-items:center;justify-content:center;height:100%;text-align:center;padding:10px;\'>Нужна картинка catscen1.jpg</div>'">
+            </div>
+            <div class="cutscene-text-block">
+                <h1>Легенда о Фрегате</h1>
+                <div class="dialogue-box" style="margin-bottom: 3vmin;">
+                    <p>Старец отшельник рассказал нашему юному Чибику, что пройдя пещеру и испытания в ней, он найдёт скрытый грот, где будет Настоящий пиратский фрегат!</p>
+                </div>
+                <button class="btn" onclick="showCutscene2()">Далее ➡</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Катсцена 2: План действий -->
+    <div id="cutscene2" class="overlay-screen hidden" style="background: linear-gradient(135deg, #8e44ad 0%, #2c3e50 100%);">
+        <div class="cutscene-layout">
+            <div class="cutscene-img-block">
+                <img src="catscen2.jpg" alt="Лавовая река"
+                     onerror="this.parentElement.style.background='#512e5f'; this.style.display='none'; this.parentElement.innerHTML='<div style=\'color:#fff;display:flex;align-items:center;justify-content:center;height:100%;text-align:center;padding:10px;\'>Нужна картинка catscen2.jpg</div>'">
+            </div>
+            <div class="cutscene-text-block">
+                <div class="dialogue-box" style="margin-bottom: 3vmin;">
+                    <p>Да, испытание в пещере предстоит не простое, нужно проплыть как-то через огромную реку лавы, вдоль огромных скалистых берегов... ну попробуем это сделать по камням.. так, мы видим что есть камни плывущие наиболее устойчиво, попробуем пропрыгать по ним.</p>
+                    <p style="text-align: center; font-weight: bold; font-size: 1.2em; color: #d35400; margin-top: 10px;">ВПЕРЁД!</p>
+                </div>
+                <button class="btn" style="background: linear-gradient(180deg, #27ae60 0%, #2ecc71 100%); box-shadow: 0 0.6vmin 0 #1e8449;" onclick="startLevelIntro()">НАЧАТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Вступление -->
+    <div id="intro" class="overlay-screen hidden">
+        <div style="margin-top:auto; margin-bottom:auto; display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <h1>Глава 1: Первое испытание! Сквозь Лаву!</h1>
+            <div class="dialogue-box">
+                <p><strong>Чибик:</strong> "Ого, какое быстрое течение! Берег проносится мимо. Мне нужно найти букву <b id="intro-letter" style="color:red">А</b>. Берегись скал по краям!"</p>
+                <button class="btn" onclick="startLevel()">Начать заплыв!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пауза -->
+    <div id="pause-screen" class="overlay-screen hidden">
+        <h1>Пауза</h1>
+        <div class="dialogue-box">
+            <p>Игра приостановлена.</p>
+            <button class="btn" onclick="togglePause()">Продолжить</button>
+            <button class="btn" style="background:#d32f2f;" onclick="resetGame()">В меню</button>
+        </div>
+    </div>
+
+    <!-- Игра Окончена -->
+    <div id="game-over" class="overlay-screen hidden">
+        <h1>О нет!</h1>
+        <div class="dialogue-box">
+            <p id="game-over-reason">Причина проигрыша...</p>
+            <button class="btn" onclick="resetGame()">Попробовать снова</button>
+        </div>
+    </div>
+
+    <!-- Финал -->
+    <div id="outro" class="overlay-screen hidden">
+        <h1>Корабль в Гроте!</h1>
+        <div class="dialogue-box">
+            <p><strong>Мудрый Отшельник:</strong> "Ты виртуозно справился с течением и выучил весь алфавит, Юный Пират! Твой новый корабль готов к отплытию."</p>
+            <div id="ai-victory-speech" style="font-style: italic; color: #5d4037; font-size: 0.9em; margin-bottom: 10px;"></div>
+            <button class="btn" onclick="resetGame()">Вернуться в начало</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiKey = ""; // Gemini API Key
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ".split("");
+    
+    // --- GEMINI AI FUNCTIONS ---
+    async function callGemini(promptText) {
+        if (!apiKey) return null;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+            });
+            if (!response.ok) throw new Error('API Error');
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    async function generatePiratePraise(letter) {
+        const fallbacks = ["Отличная работа!", "Молодец!", "Так держать!", "Полный вперёд!", "Ещё одну нашли!"];
+        const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        const prompt = `Представь, что ты веселый пират Чибик из детской игры. Ребенок нашел букву "${letter}". Придумай очень короткую (2-4 слова), веселую и ободряющую фразу на русском языке. Пиратский стиль, по-доброму.`;
+        pirate.currentPhrase = "Хм..."; 
+        const aiResponse = await callGemini(prompt);
+        if (aiResponse) {
+            pirate.currentPhrase = aiResponse.replace(/["«»]/g, '').trim(); 
+            pirate.phraseDuration = 3000; 
+        } else {
+            pirate.currentPhrase = fallback;
+            pirate.phraseDuration = 2000;
+        }
+    }
+
+    async function generateVictorySpeech() {
+        const container = document.getElementById('ai-victory-speech');
+        container.textContent = "Чибик пишет судовой журнал...";
+        const prompt = "Напиши короткое (1-2 предложения) вдохновляющее поздравление для ребенка, выучившего алфавит в игре про пиратов. Стиль: добрый мудрый капитан.";
+        const aiResponse = await callGemini(prompt);
+        if (aiResponse) {
+            container.textContent = `"${aiResponse}"`;
+        } else {
+            container.textContent = "Алфавит выучен! Сокровища знаний теперь твои!";
+        }
+    }
+    // --- END AI FUNCTIONS ---
+
+    let gameState = 'loading'; // Начинаем с экрана загрузки
+    let difficulty = 'easy';
+    let lives = 3;
+    let currentLetterIdx = 0;
+    let stones = [];
+    let particles = [];
+    let bubbles = [];
+    
+    const FLOW_X = -1.2;
+    const FLOW_Y = 0.7;
+    const SLOPE = -0.6; 
+    
+    let riverWidthHalf = 350;
+    let globalScale = 1; 
+    
+    let pirate = { 
+        x: 0, 
+        y: 0, 
+        onStone: null, 
+        jumping: false, 
+        jumpProgress: 0,
+        bobOffset: 0,
+        waveTimer: 0,
+        waveType: 0,
+        speechTimer: 200,
+        currentPhrase: null,
+        phraseDuration: 0
+    };
+
+    const phrases = [
+        "Ты молодец!", "Вперёд!", "Так держать!", 
+        "Свистать всех наверх!", "Мы сможем!", 
+        "Ещё немного!", "Ура!", "К сокровищам!", "Полный вперёд!"
+    ];
+
+    let frame = 0;
+    let lastTime = performance.now();
+    let spawnCooldown = 0;
+    let shoreOffset = 0;
+
+    // --- ЛОГИКА ЭКРАНА ЗАГРУЗКИ ---
+    const loadingTextFull = "Добро Пожаловать! Это прототип (MVP) одного из уровней находящейся в разработке Обучающей Игры для Детей, в данном уровне Ребёнок играючи изучает и запоминает Алфавит. Так же в игре будут игры для изучения Базовому Русскому Языку (грамматика и пунктуация) и базовая математика.";
+    let loadingIdx = 0;
+    let loadingTimer = null;
+
+    function startTypewriter() {
+        const el = document.getElementById('loading-text');
+        if (loadingIdx < loadingTextFull.length) {
+            el.textContent += loadingTextFull.charAt(loadingIdx);
+            loadingIdx++;
+            // Случайная задержка для реализма
+            loadingTimer = setTimeout(startTypewriter, 30 + Math.random() * 50); 
+        } else {
+            // Текст закончился
+            finishLoading();
+        }
+    }
+
+    function skipTypewriter() {
+        if (loadingIdx < loadingTextFull.length) {
+            clearTimeout(loadingTimer);
+            document.getElementById('loading-text').textContent = loadingTextFull;
+            loadingIdx = loadingTextFull.length;
+            finishLoading();
+        }
+    }
+
+    function finishLoading() {
+        const btn = document.getElementById('loading-continue-btn');
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        document.getElementById('loading-text').style.borderRight = 'none'; // Убрать курсор
+    }
+
+    function enterMenu() {
+        document.getElementById('loading-screen').classList.add('hidden');
+        document.getElementById('menu').classList.remove('hidden');
+        gameState = 'menu';
+    }
+
+    window.onload = function() {
+        // Старт печати при загрузке
+        startTypewriter();
+    };
+    // ----------------------------
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const minDim = Math.min(canvas.width, canvas.height);
+        globalScale = minDim / 800;
+        if (globalScale < 0.6) globalScale = 0.6;
+        if (globalScale > 1.2) globalScale = 1.2;
+        riverWidthHalf = minDim * 0.45; 
+        if (!pirate.onStone && gameState === 'menu') {
+            pirate.x = canvas.width * 0.5;
+            pirate.y = canvas.height * 0.5;
+        }
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    function togglePause() {
+        if (gameState === 'playing') {
+            gameState = 'paused';
+            document.getElementById('pause-screen').classList.remove('hidden');
+        } else if (gameState === 'paused') {
+            gameState = 'playing';
+            document.getElementById('pause-screen').classList.add('hidden');
+        }
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || e.key.toLowerCase() === 'p') {
+            togglePause();
+        }
+    });
+
+    function initAlphabetUI() {
+        const container = document.getElementById('alphabet-ui');
+        container.innerHTML = '';
+        if (difficulty === 'very_easy') {
+            alphabet.forEach((l, i) => {
+                const span = document.createElement('span');
+                span.className = 'letter-slot';
+                span.id = `l-${i}`;
+                span.textContent = l;
+                container.appendChild(span);
+            });
+        } else {
+            container.innerHTML = '<span id="current-goal">Ищем букву: <b id="cur-hint" style="color:#ffd700;">А</b></span>';
+        }
+    }
+
+    function updateLivesUI() {
+        document.getElementById('lives-ui').textContent = '❤️'.repeat(lives);
+        const hint = document.getElementById('cur-hint');
+        if (hint) hint.textContent = alphabet[currentLetterIdx];
+        const introHint = document.getElementById('intro-letter');
+        if (introHint) introHint.textContent = alphabet[currentLetterIdx];
+    }
+
+    function startGame(diff) {
+        difficulty = diff;
+        lives = (diff === 'normal') ? 1 : 3;
+        gameState = 'cutscene1'; 
+        document.querySelectorAll('.overlay-screen').forEach(el => el.classList.add('hidden'));
+        document.getElementById('cutscene1').classList.remove('hidden');
+        updateLivesUI();
+        initAlphabetUI();
+    }
+
+    function showCutscene2() {
+        document.getElementById('cutscene1').classList.add('hidden');
+        document.getElementById('cutscene2').classList.remove('hidden');
+        gameState = 'cutscene2';
+    }
+
+    function startLevelIntro() {
+        document.getElementById('cutscene2').classList.add('hidden');
+        document.getElementById('intro').classList.remove('hidden');
+        gameState = 'intro';
+    }
+
+    function startLevel() {
+        gameState = 'playing';
+        document.getElementById('intro').classList.add('hidden');
+        currentLetterIdx = 0;
+        stones = [];
+        bubbles = [];
+        spawnInitialStones();
+        updateLivesUI();
+        lastTime = performance.now();
+    }
+
+    function resetGame() {
+        location.reload();
+    }
+
+    function getRiverCenterY(x) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        return SLOPE * (x - cx) + cy;
+    }
+
+    function isInRiver(x, y) {
+        const centerY = getRiverCenterY(x);
+        return Math.abs(y - centerY) < riverWidthHalf;
+    }
+
+    function drawLava() {
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#ff9100'); 
+        grad.addColorStop(0.5, '#ff3d00'); 
+        grad.addColorStop(1, '#8e0000'); 
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        ctx.lineWidth = 3 * globalScale;
+        const step = 60 * globalScale;
+        const timeOffset = (frame * 2) % step;
+        ctx.strokeStyle = 'rgba(255, 230, 100, 0.3)';
+        const minC = -canvas.width * Math.abs(SLOPE) - 300;
+        const maxC = canvas.height + 300;
+        for (let c = minC; c < maxC; c += step) {
+            let currentC = c + timeOffset;
+            ctx.beginPath();
+            let startDrawn = false;
+            for (let x = -50; x <= canvas.width + 50; x += 30) {
+                let baseX = x;
+                let baseY = SLOPE * baseX + currentC;
+                let wave = Math.sin(x * 0.05 + frame * 0.1) * (10 * globalScale);
+                let drawY = baseY + wave;
+                if (!startDrawn) {
+                    ctx.moveTo(x, drawY);
+                    startDrawn = true;
+                } else {
+                    ctx.lineTo(x, drawY);
+                }
+            }
+            ctx.stroke();
+        }
+        ctx.globalCompositeOperation = 'overlay';
+        ctx.fillStyle = 'rgba(255, 200, 50, 0.1)';
+        ctx.fillRect(0,0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.restore();
+    }
+
+    function drawShores() {
+        ctx.fillStyle = '#3e2723'; 
+        ctx.strokeStyle = '#5d4037';
+        ctx.lineWidth = 8 * globalScale;
+        const w = canvas.width;
+        const h = canvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const offset = riverWidthHalf;
+        shoreOffset -= 2 * globalScale; 
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0); 
+        ctx.lineTo(w, 0); 
+        let rightBankY = SLOPE * (w - cx) + cy - offset;
+        ctx.lineTo(w, rightBankY);
+        const segments = 40;
+        for(let i = segments; i >= 0; i--) {
+            let x = (w / segments) * i;
+            let idealY = SLOPE * (x - cx) + cy - offset;
+            let noiseX = x + shoreOffset; 
+            let noise = (Math.sin(noiseX * 0.02) * 15 + Math.cos(noiseX * 0.05) * 10) * globalScale;
+            ctx.lineTo(x, idealY + noise);
+        }
+        ctx.lineTo(0, SLOPE * (0 - cx) + cy - offset); 
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, h); 
+        ctx.lineTo(w, h); 
+        let rightBankBottomY = SLOPE * (w - cx) + cy + offset;
+        ctx.lineTo(w, rightBankBottomY);
+        for(let i = segments; i >= 0; i--) {
+            let x = (w / segments) * i;
+            let idealY = SLOPE * (x - cx) + cy + offset;
+            let noiseX = x + shoreOffset + 1000;
+            let noise = (Math.sin(noiseX * 0.02) * 15 + Math.cos(noiseX * 0.05) * 10) * globalScale;
+            ctx.lineTo(x, idealY + noise);
+        }
+        ctx.lineTo(0, SLOPE * (0 - cx) + cy + offset);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    function drawBubbles() {
+        if (Math.random() < 0.2) {
+            let spawnX = Math.random() * canvas.width + 200;
+            let centerY = getRiverCenterY(spawnX);
+            let spawnY = centerY + (Math.random() - 0.5) * (riverWidthHalf * 1.8);
+            bubbles.push({
+                x: spawnX,
+                y: spawnY,
+                r: (3 + Math.random() * 6) * globalScale,
+                speed: (2 + Math.random() * 4) * globalScale,
+                life: 1.0
+            });
+        }
+        for (let i = bubbles.length - 1; i >= 0; i--) {
+            let b = bubbles[i];
+            b.x += FLOW_X * b.speed;
+            b.y += FLOW_Y * b.speed;
+            b.life -= 0.01;
+            if (b.life <= 0 || b.x < -50 || b.y > canvas.height + 50) {
+                bubbles.splice(i, 1);
+                continue;
+            }
+            let cy = getRiverCenterY(b.x);
+            if (Math.abs(b.y - cy) < riverWidthHalf - 20) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${b.life * 0.5})`;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    function spawnInitialStones() {
+        const startStone = {
+            x: canvas.width * 0.5,
+            y: canvas.height * 0.5,
+            char: "★",
+            width: 140 * globalScale,
+            height: 70 * globalScale,
+            speed: 1.0 * globalScale,
+            standingTime: 0,
+            sinkProgress: 0,
+            isSinking: false,
+            bobPhase: Math.random() * 10
+        };
+        stones.push(startStone);
+        pirate.onStone = startStone;
+        pirate.x = startStone.x;
+        pirate.y = startStone.y;
+        for(let i = 0; i < 12; i++) spawnStone(true);
+    }
+
+    function spawnStone(isInitial = false) {
+        const safeThreshold = canvas.width * 0.35; 
+        const hasCorrectOnScreen = stones.some(s => 
+            s.char === alphabet[currentLetterIdx] && 
+            !s.isSinking && 
+            s.x > safeThreshold
+        );
+        let chance = hasCorrectOnScreen ? 0.4 : 1.0;
+        let char;
+        if (Math.random() < chance) {
+            char = alphabet[currentLetterIdx];
+        } else {
+            let randIdx;
+            do {
+                randIdx = Math.floor(Math.random() * alphabet.length);
+            } while (randIdx === currentLetterIdx);
+            char = alphabet[randIdx];
+        }
+        let x, y;
+        let tries = 0;
+        do {
+            if (isInitial) {
+                x = Math.random() * canvas.width;
+            } else {
+                x = canvas.width + 50 + Math.random() * 150; 
+            }
+            let centerY = getRiverCenterY(x);
+            y = centerY + (Math.random() - 0.5) * (riverWidthHalf * 1.6);
+            tries++;
+        } while (tries < 5);
+        stones.push({
+            x: x,
+            y: y,
+            char: char,
+            width: 120 * globalScale,
+            height: 60 * globalScale,
+            speed: (0.5 + Math.random() * 0.5) * globalScale,
+            standingTime: 0,
+            sinkProgress: 0,
+            isSinking: false,
+            bobPhase: Math.random() * 10
+        });
+    }
+
+    function updateGame(deltaTime) {
+        pirate.waveTimer -= 1;
+        if (pirate.waveTimer <= 0) {
+            let r = Math.random();
+            if (r < 0.5) pirate.waveType = 0;
+            else if (r < 0.7) pirate.waveType = 1;
+            else if (r < 0.9) pirate.waveType = 2;
+            else pirate.waveType = 3;
+            pirate.waveTimer = 60 + Math.random() * 120;
+        }
+        if (pirate.currentPhrase) {
+            pirate.phraseDuration -= deltaTime;
+            if (pirate.phraseDuration <= 0) {
+                pirate.currentPhrase = null;
+                pirate.speechTimer = 3000 + Math.random() * 4000;
+            }
+        } else {
+            pirate.speechTimer -= deltaTime;
+            if (pirate.speechTimer <= 0) {
+                pirate.currentPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+                pirate.phraseDuration = 2000;
+            }
+        }
+        spawnCooldown -= deltaTime;
+        const needsRescue = pirate.onStone && pirate.onStone.standingTime > 2000;
+        const safeThreshold = canvas.width * 0.35;
+        const missingTarget = !stones.some(s => s.char === alphabet[currentLetterIdx] && !s.isSinking && s.x > safeThreshold);
+        const maxStones = 20;
+        if ((needsRescue || missingTarget) && spawnCooldown > 100) {
+             spawnCooldown = 100; 
+        }
+        if (spawnCooldown <= 0 && stones.length < maxStones) {
+            spawnStone();
+            spawnCooldown = 500 + Math.random() * 500; 
+        }
+        for (let i = 0; i < stones.length; i++) {
+            for (let j = i + 1; j < stones.length; j++) {
+                let s1 = stones[i];
+                let s2 = stones[j];
+                let dx = s1.x - s2.x;
+                let dy = s1.y - s2.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                let minDist = (s1.width + s2.width) * 0.45; 
+                if (dist < minDist && dist > 0) {
+                    let overlap = minDist - dist;
+                    let nx = dx / dist;
+                    let ny = dy / dist;
+                    let pushFactor = 0.05 * globalScale; 
+                    s1.x += nx * overlap * pushFactor;
+                    s1.y += ny * overlap * pushFactor;
+                    s2.x -= nx * overlap * pushFactor;
+                    s2.y -= ny * overlap * pushFactor;
+                }
+            }
+        }
+        for (let i = stones.length - 1; i >= 0; i--) {
+            let s = stones[i];
+            s.x += FLOW_X * s.speed;
+            s.y += FLOW_Y * s.speed;
+            let bobY = Math.sin(frame * 0.05 + s.bobPhase) * (4 * globalScale);
+            if (pirate.onStone === s && !pirate.jumping) {
+                pirate.x = s.x;
+                pirate.y = s.y + bobY - (20 * globalScale); 
+                s.standingTime += deltaTime;
+                if (s.standingTime > 9000) {
+                    s.isSinking = true;
+                    s.sinkProgress += deltaTime / 4000;
+                    if (s.sinkProgress >= 1) gameOver("Камень ушёл под лаву!");
+                }
+            }
+            if (s.sinkProgress < 1) {
+                ctx.save();
+                ctx.translate(s.x, s.y + bobY);
+                if (s.isSinking) {
+                    ctx.translate(0, s.sinkProgress * 40 * globalScale);
+                    ctx.globalAlpha = 1 - s.sinkProgress;
+                }
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.beginPath();
+                ctx.ellipse(10 * globalScale, 25 * globalScale, s.width/2.2, s.height/2.2, 0, 0, Math.PI*2);
+                ctx.fill();
+                const isTarget = (s.char === alphabet[currentLetterIdx]);
+                let highlightThreshold = canvas.width * 0.35; 
+                let isUpstreamSafe = s.x > highlightThreshold;
+                let grad = ctx.createRadialGradient(-10 * globalScale, -10 * globalScale, 5 * globalScale, 0, 0, s.width/2);
+                if (isTarget && difficulty === 'very_easy' && isUpstreamSafe) {
+                    grad.addColorStop(0, '#fff176');
+                    grad.addColorStop(1, '#fbc02d');
+                } else {
+                    grad.addColorStop(0, '#8d6e63');
+                    grad.addColorStop(1, '#3e2723');
+                }
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, s.width/2, s.height/2, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = `bold ${36 * globalScale}px Comfortaa`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(s.char, 0, 0);
+                if (pirate.onStone === s) {
+                    ctx.globalAlpha = 1.0;
+                    if (s.standingTime > 6000 && !s.isSinking) {
+                        ctx.save();
+                        let pulse = 1 + Math.sin(frame * 0.2) * 0.1;
+                        ctx.scale(pulse, pulse);
+                        ctx.fillStyle = (frame % 20 < 10) ? '#ffeb3b' : '#ff5252'; 
+                        ctx.font = `bold ${28 * globalScale}px Arial`;
+                        ctx.strokeStyle = 'black';
+                        ctx.lineWidth = 3 * globalScale;
+                        let warnX = -70 * globalScale / pulse;
+                        let warnY = -40 * globalScale / pulse;
+                        ctx.strokeText("!!!", warnX, warnY);
+                        ctx.fillText("!!!", warnX, warnY);
+                        ctx.restore();
+                    }
+                    if (s.isSinking) {
+                        let timeLeft = Math.ceil(4 * (1 - s.sinkProgress));
+                        if (timeLeft < 0) timeLeft = 0;
+                        ctx.save();
+                        let pulse = 1 + Math.sin(frame * 0.5) * 0.15;
+                        ctx.scale(pulse, pulse);
+                        ctx.fillStyle = '#ff1744'; 
+                        ctx.font = `bold ${50 * globalScale}px Comfortaa`; 
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = 5 * globalScale;
+                        let timerX = -85 * globalScale / pulse;
+                        let timerY = -30 * globalScale / pulse;
+                        ctx.strokeText(timeLeft, timerX, timerY);
+                        ctx.fillText(timeLeft, timerX, timerY);
+                        ctx.restore();
+                    }
+                }
+                ctx.restore();
+            }
+            if (s.x < -150 * globalScale || s.y > canvas.height + 150 * globalScale) {
+                if (pirate.onStone === s) gameOver("Уплыл слишком далеко!");
+                stones.splice(i, 1);
+            }
+        }
+        updateParticles();
+    }
+
+    function checkJump(ex, ey) {
+        if (gameState !== 'playing' || pirate.jumping) return;
+        let bestStone = null;
+        for (let s of stones) {
+            let dx = ex - s.x;
+            let dy = ey - s.y; 
+            if ( (dx*dx)/((s.width/1.2)**2) + (dy*dy)/((s.height/1.2)**2) <= 1.2 ) { 
+                bestStone = s;
+                break; 
+            }
+        }
+        if (bestStone && bestStone !== pirate.onStone) {
+            pirate.jumping = true;
+            pirate.jumpProgress = 0;
+            pirate.jumpStartX = pirate.x;
+            pirate.jumpStartY = pirate.y;
+            if (bestStone.char === alphabet[currentLetterIdx]) {
+                pirate.onStone = bestStone;
+                currentLetterIdx++;
+                createExplosion(bestStone.x, bestStone.y, '#ffd700');
+                if (difficulty === 'very_easy') {
+                     const el = document.getElementById(`l-${currentLetterIdx-1}`);
+                     if (el) el.classList.add('active');
+                }
+                updateLivesUI();
+                generatePiratePraise(bestStone.char);
+                if (currentLetterIdx >= alphabet.length) {
+                    setTimeout(() => {
+                        win();
+                        generateVictorySpeech(); 
+                    }, 500);
+                }
+            } else {
+                lives--;
+                createExplosion(bestStone.x, bestStone.y, '#ff3d00');
+                updateLivesUI();
+                if (lives <= 0) setTimeout(() => gameOver("Неверная буква!"), 300);
+                pirate.onStone = bestStone;
+            }
+        }
+    }
+
+    function drawPirate() {
+        ctx.save();
+        let dx = pirate.x;
+        let dy = pirate.y;
+        if (pirate.jumping) {
+            pirate.jumpProgress += 0.08;
+            if (pirate.jumpProgress >= 1) {
+                pirate.jumping = false;
+                pirate.jumpProgress = 0;
+            } else {
+                dy -= Math.sin(pirate.jumpProgress * Math.PI) * (100 * globalScale);
+            }
+        }
+        ctx.translate(dx, dy);
+        ctx.scale(globalScale, globalScale);
+        if (!pirate.jumping) {
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(0, 20, 30, 15, 0, 0, Math.PI*2);
+            ctx.fill();
+        }
+        ctx.fillStyle = '#222'; 
+        ctx.beginPath();
+        ctx.ellipse(-10, 18, 6, 8, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(10, 18, 6, 8, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#e67e22'; 
+        ctx.fillRect(-20, -15, 40, 35);
+        ctx.fillStyle = '#c0392b';
+        ctx.beginPath();
+        ctx.moveTo(-20, -15);
+        ctx.lineTo(0, 5);
+        ctx.lineTo(20, -15);
+        ctx.lineTo(0, -25);
+        ctx.fill();
+        ctx.fillStyle = '#ffdbac';
+        ctx.beginPath();
+        ctx.arc(0, -45, 35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#222';
+        ctx.beginPath();
+        ctx.moveTo(-50, -60);
+        ctx.quadraticCurveTo(0, -110, 50, -60);
+        ctx.lineTo(0, -50);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.font = '16px Arial';
+        ctx.fillText('☠', -8, -75);
+        ctx.fillStyle = '#00bcd4';
+        if (lives > 0) {
+            if (Math.random() > 0.98) {
+                 ctx.fillRect(-18, -48, 12, 4);
+                 ctx.fillRect(6, -48, 12, 4);
+            } else {
+                ctx.beginPath();
+                ctx.arc(-12, -45, 6, 0, Math.PI * 2);
+                ctx.arc(12, -45, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        } else {
+            ctx.font = '20px Arial';
+            ctx.fillText('x  x', -18, -40);
+        }
+        if (lives > 0) {
+            ctx.strokeStyle = '#d84315';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(0, -32, 10, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+        }
+        if (pirate.currentPhrase && lives > 0) {
+            ctx.save();
+            ctx.translate(0, -90); 
+            ctx.font = 'bold 16px Comfortaa';
+            const textMetrics = ctx.measureText(pirate.currentPhrase);
+            const bubbleWidth = textMetrics.width + 40;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.roundRect(-bubbleWidth/2, -30, bubbleWidth, 30, 10);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(10, 10);
+            ctx.lineTo(20, 0);
+            ctx.fill();
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const displayText = apiKey ? `✨ ${pirate.currentPhrase}` : pirate.currentPhrase;
+            ctx.fillText(displayText, 0, -15);
+            ctx.restore();
+        }
+        ctx.save();
+        ctx.translate(-18, -10);
+        let leftAngle = 0.5;
+        if (pirate.waveType === 1 || pirate.waveType === 3) {
+            leftAngle = Math.PI + Math.sin(frame * 0.2) * 0.5;
+        }
+        ctx.rotate(leftAngle);
+        ctx.fillStyle = '#e67e22'; 
+        ctx.beginPath(); ctx.roundRect(-5, 0, 10, 20, 5); ctx.fill();
+        ctx.fillStyle = '#ffdbac'; 
+        ctx.beginPath(); ctx.arc(0, 20, 6, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+        ctx.save();
+        ctx.translate(18, -10);
+        let rightAngle = -0.5;
+        if (pirate.waveType === 2 || pirate.waveType === 3) {
+            rightAngle = -Math.PI - Math.sin(frame * 0.2 + 1) * 0.5; 
+        }
+        ctx.rotate(rightAngle);
+        ctx.fillStyle = '#e67e22'; 
+        ctx.beginPath(); ctx.roundRect(-5, 0, 10, 20, 5); ctx.fill();
+        ctx.fillStyle = '#ffdbac'; 
+        ctx.beginPath(); ctx.arc(0, 20, 6, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+        ctx.restore();
+    }
+
+    function createExplosion(x, y, color) {
+        for(let i=0; i<15; i++) {
+            particles.push({
+                x: x, y: y,
+                vx: (Math.random()-0.5)*10 * globalScale,
+                vy: (Math.random()-0.5)*10 * globalScale,
+                life: 1.0,
+                color: color
+            });
+        }
+    }
+
+    function updateParticles() {
+        for(let i=particles.length-1; i>=0; i--) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.05;
+            if(p.life <= 0) {
+                particles.splice(i,1);
+                continue;
+            }
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 5 * globalScale, 0, Math.PI*2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    function gameOver(reason) {
+        gameState = 'gameover';
+        document.getElementById('game-over-reason').innerText = reason;
+        document.querySelectorAll('.overlay-screen').forEach(el => el.classList.add('hidden'));
+        document.getElementById('game-over').classList.remove('hidden');
+    }
+
+    function win() {
+        gameState = 'outro';
+        document.querySelectorAll('.overlay-screen').forEach(el => el.classList.add('hidden'));
+        document.getElementById('outro').classList.remove('hidden');
+    }
+
+    function loop(time) {
+        let dt = time - lastTime;
+        lastTime = time;
+        if (gameState !== 'paused') {
+            frame++;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawLava();
+            drawBubbles();
+            drawShores();
+            if (gameState === 'playing') {
+                updateGame(dt);
+                drawPirate();
+            } else if (gameState === 'intro' || gameState === 'gameover' || gameState === 'outro') {
+                // Фон
+            }
+        }
+        requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener('mousedown', (e) => checkJump(e.clientX, e.clientY));
+    canvas.addEventListener('touchstart', (e) => {
+        checkJump(e.touches[0].clientX, e.touches[0].clientY);
+    });
+
+    requestAnimationFrame(loop);
+
+</script>
+</body>
+</html>
